@@ -1,0 +1,71 @@
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Section, SectionHeading } from "@/components/common/Section";
+import { InsightCard } from "@/components/common/InsightCard";
+import { Reveal } from "@/components/common/Reveal";
+import { insightCategories } from "@/content/insights/categories";
+import { sections } from "@/content/homepage";
+import { useInsights } from "@/features/blog/useInsights";
+
+/**
+ * Section 10 — Insights.
+ * Three featured articles in a clean editorial layout, plus the category rail.
+ */
+export function InsightsPreview() {
+  const { insights, loading } = useInsights();
+  const { insights: copy } = sections;
+  const featured = insights.slice(0, 3);
+
+  return (
+    <Section>
+      <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
+        <SectionHeading
+          eyebrow={copy.eyebrow}
+          headline={copy.headline}
+          supporting={copy.supporting}
+        />
+        <Button asChild variant="outline" className="shrink-0">
+          <Link to={copy.cta.href}>
+            {copy.cta.label}
+            <ArrowRight aria-hidden />
+          </Link>
+        </Button>
+      </div>
+
+      <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-3 border-y border-border py-4">
+        {insightCategories.map((category) => (
+          <li key={category.slug}>
+            <Link
+              to={`/insights?category=${category.slug}`}
+              className="text-xs uppercase tracking-eyebrow text-muted-foreground transition-colors hover:text-accent"
+            >
+              {category.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+
+      {loading ? (
+        <div className="mt-14 grid gap-10 md:grid-cols-3">
+          {[0, 1, 2].map((index) => (
+            <div key={index} className="animate-pulse">
+              <div className="aspect-[16/10] bg-muted" />
+              <div className="mt-6 h-3 w-24 bg-muted" />
+              <div className="mt-4 h-5 w-full bg-muted" />
+              <div className="mt-2 h-5 w-2/3 bg-muted" />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="mt-14 grid gap-10 md:grid-cols-3">
+          {featured.map((insight, index) => (
+            <Reveal key={insight.id} delay={index * 60}>
+              <InsightCard insight={insight} />
+            </Reveal>
+          ))}
+        </div>
+      )}
+    </Section>
+  );
+}

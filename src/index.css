@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background font-sans text-base font-normal text-foreground;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display font-normal tracking-[-0.01em] text-primary;
+  }
+
+  ::selection {
+    @apply bg-accent/25;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+}
+
+@layer components {
+  /* Small-caps label that sits above section headings. */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 font-sans text-[0.6875rem] font-medium uppercase tracking-eyebrow text-accent;
+  }
+
+  /* The hairline rule used as a quiet divider throughout the site. */
+  .hairline {
+    @apply h-px w-full bg-border;
+  }
+
+  /* Editorial body copy inside long-form pages (insights, legal pages). */
+  .prose-legal {
+    @apply text-[1.0625rem] leading-[1.75] text-foreground/80;
+  }
+  .prose-legal h2 {
+    @apply mb-3 mt-10 font-display text-2xl text-primary;
+  }
+  .prose-legal h3 {
+    @apply mb-2 mt-8 font-display text-xl text-primary;
+  }
+  .prose-legal p {
+    @apply mb-5;
+  }
+  .prose-legal ul {
+    @apply mb-5 list-disc space-y-2 pl-5;
+  }
+  .prose-legal ol {
+    @apply mb-5 list-decimal space-y-2 pl-5;
+  }
+  .prose-legal a {
+    @apply text-accent underline underline-offset-4;
+  }
+  .prose-legal blockquote {
+    @apply my-6 border-l-2 border-accent pl-5 font-display text-xl italic text-primary;
+  }
+  .prose-legal table {
+    @apply mb-5 w-full border-collapse text-sm;
+  }
+  .prose-legal th,
+  .prose-legal td {
+    @apply border border-border px-3 py-2 text-left;
+  }
+  .prose-legal th {
+    @apply bg-muted font-medium text-primary;
+  }
+  .prose-legal code {
+    @apply rounded-sm bg-muted px-1.5 py-0.5 text-[0.9em];
+  }
+}
