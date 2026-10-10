@@ -2,20 +2,20 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Section, SectionHeading } from "@/components/common/Section";
-import { InsightCard } from "@/components/common/InsightCard";
+import { BlogCard } from "@/components/common/BlogCard";
 import { Reveal } from "@/components/common/Reveal";
-import { insightCategories } from "@/content/insights/categories";
+import { blogCategories } from "@/content/blog/categories";
 import { sections } from "@/content/homepage";
-import { useInsights } from "@/features/blog/useInsights";
+import { useBlogPosts } from "@/features/blog/useBlogPosts";
 
 /**
- * Section 10 — Insights.
+ * Section 10 — Blog.
  * Three featured articles in a clean editorial layout, plus the category rail.
  */
-export function InsightsPreview() {
-  const { insights, loading } = useInsights();
-  const { insights: copy } = sections;
-  const featured = insights.slice(0, 3);
+export function BlogPreview() {
+  const { posts, loading } = useBlogPosts();
+  const { blog: copy } = sections;
+  const featured = posts.slice(0, 3);
 
   return (
     <Section>
@@ -34,10 +34,10 @@ export function InsightsPreview() {
       </div>
 
       <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-3 border-y border-border py-4">
-        {insightCategories.map((category) => (
+        {blogCategories.map((category) => (
           <li key={category.slug}>
             <Link
-              to={`/insights?category=${category.slug}`}
+              to={`/blog?category=${category.slug}`}
               className="text-xs uppercase tracking-eyebrow text-muted-foreground transition-colors hover:text-accent"
             >
               {category.label}
@@ -59,9 +59,9 @@ export function InsightsPreview() {
         </div>
       ) : (
         <div className="mt-14 grid gap-10 md:grid-cols-3">
-          {featured.map((insight, index) => (
-            <Reveal key={insight.id} delay={index * 60}>
-              <InsightCard insight={insight} />
+          {featured.map((post, index) => (
+            <Reveal key={post.id} delay={index * 60}>
+              <BlogCard post={post} />
             </Reveal>
           ))}
         </div>

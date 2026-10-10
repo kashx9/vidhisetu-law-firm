@@ -1,17 +1,17 @@
 /**
- * SEEDED INSIGHTS — mock article data.
+ * SEEDED BLOG POSTS — mock article data.
  *
  * These are the posts the site ships with. Anything authored through the
- * Insights Studio is stored separately and merged on top of this list at
+ * Blog Studio is stored separately and merged on top of this list at
  * runtime (see src/features/blog/blogStore.ts), so editing this file never
  * destroys drafted content and clearing local drafts never destroys these.
  *
  * To publish an article by hand, add an object here with status "published".
  */
 
-import type { Insight } from "@/features/blog/types";
+import type { BlogPost } from "@/features/blog/types";
 
-export const seedInsights: Insight[] = [
+export const seedPosts: BlogPost[] = [
   {
     id: "seed-term-sheet-clauses",
     slug: "five-term-sheet-clauses-founders-underestimate",
@@ -391,7 +391,7 @@ That standard costs an hour a quarter, and it is the difference between a two-we
     slug: "draft-gst-implications-of-cross-border-saas",
     title: "GST Implications of Cross-Border SaaS Supply",
     excerpt:
-      "An unfinished draft, included so the Insights Studio has something to show in the non-published states.",
+      "An unfinished draft, included so the Blog Studio has something to show in the non-published states.",
     category: "compliance",
     practiceArea: "compliance-regulatory",
     industry: "saas-technology",
@@ -404,7 +404,7 @@ That standard costs an hour a quarter, and it is the difference between a two-we
     source: "seed",
     body: `## Scope of this note
 
-Placeholder draft. This record exists so that the Insights Studio shows a realistic mix of statuses — it is deliberately not published and therefore does not appear on the public /insights listing.
+Placeholder draft. This record exists so that the Blog Studio shows a realistic mix of statuses — it is deliberately not published and therefore does not appear on the public /blog listing.
 
 ## Sections to complete
 

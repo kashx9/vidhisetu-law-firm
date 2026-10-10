@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Editorial placeholder art for insight cards and article headers.
+ * Editorial placeholder art for blog cards and article headers.
  *
  * The brief rules out gavels, courthouses and generic lawyer stock imagery, so
  * until real photography or illustration is supplied we generate a restrained

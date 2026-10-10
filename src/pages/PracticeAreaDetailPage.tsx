@@ -10,19 +10,19 @@ import {
 import { PageHero } from "@/components/common/PageHero";
 import { Section, SectionHeading } from "@/components/common/Section";
 import { Reveal } from "@/components/common/Reveal";
-import { InsightCard } from "@/components/common/InsightCard";
+import { BlogCard } from "@/components/common/BlogCard";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { getPracticeArea, practiceAreas } from "@/content/practiceAreas";
 import { getIndustry } from "@/content/industries";
 import { approachSteps } from "@/content/approach";
 import { site } from "@/content/site";
-import { useInsights } from "@/features/blog/useInsights";
+import { useBlogPosts } from "@/features/blog/useBlogPosts";
 import { getIcon } from "@/lib/icons";
 
 export default function PracticeAreaDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const area = slug ? getPracticeArea(slug) : undefined;
-  const { insights } = useInsights();
+  const { posts } = useBlogPosts();
 
   usePageMeta({
     title: area ? `${area.headline} — ${site.name}` : site.name,
@@ -31,7 +31,7 @@ export default function PracticeAreaDetailPage() {
 
   if (!area) return <Navigate to="/practice-areas" replace />;
 
-  const related = insights.filter((post) => post.practiceArea === area.slug).slice(0, 3);
+  const related = posts.filter((post) => post.practiceArea === area.slug).slice(0, 3);
   const others = practiceAreas.filter((item) => item.slug !== area.slug).slice(0, 4);
 
   return (
@@ -163,11 +163,11 @@ export default function PracticeAreaDetailPage() {
 
       {related.length ? (
         <Section>
-          <SectionHeading eyebrow="Insights" headline="Further Reading." />
+          <SectionHeading eyebrow="From the Blog" headline="Further Reading." />
           <div className="mt-12 grid gap-10 md:grid-cols-3">
-            {related.map((insight, index) => (
-              <Reveal key={insight.id} delay={index * 50}>
-                <InsightCard insight={insight} />
+            {related.map((post, index) => (
+              <Reveal key={post.id} delay={index * 50}>
+                <BlogCard post={post} />
               </Reveal>
             ))}
           </div>

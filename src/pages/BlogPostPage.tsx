@@ -5,26 +5,24 @@ import { Badge } from "@/components/ui/badge";
 import { Container, Section, SectionHeading } from "@/components/common/Section";
 import { CoverArt } from "@/components/common/CoverArt";
 import { Markdown } from "@/components/common/Markdown";
-import { InsightCard } from "@/components/common/InsightCard";
+import { BlogCard } from "@/components/common/BlogCard";
 import { usePageMeta } from "@/hooks/usePageMeta";
-import { categoryLabel } from "@/content/insights/categories";
-import { getAuthor } from "@/content/insights/authors";
+import { categoryLabel } from "@/content/blog/categories";
+import { getAuthor } from "@/content/blog/authors";
 import { getPracticeArea } from "@/content/practiceAreas";
 import { getIndustry } from "@/content/industries";
 import { site } from "@/content/site";
-import { useInsight, useInsights } from "@/features/blog/useInsights";
+import { useBlogPost, useBlogPosts } from "@/features/blog/useBlogPosts";
 import { formatDate, readingTime } from "@/lib/utils";
 
-export default function InsightDetailPage() {
+export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
-  const { insight, loading } = useInsight(slug);
-  const { insights } = useInsights();
+  const { post, loading } = useBlogPost(slug);
+  const { posts } = useBlogPosts();
 
   usePageMeta({
-    title: insight
-      ? `${insight.seo?.title ?? insight.title} — ${site.name}`
-      : `Insights — ${site.name}`,
-    description: insight?.seo?.description ?? insight?.excerpt,
+    title: post ? `${post.seo?.title ?? post.title} — ${site.name}` : `Blog — ${site.name}`,
+    description: post?.seo?.description ?? post?.excerpt,
   });
 
   if (loading) {
@@ -40,14 +38,14 @@ export default function InsightDetailPage() {
   }
 
   // Drafts and archived posts are not publicly readable.
-  if (!insight || insight.status !== "published") return <Navigate to="/insights" replace />;
+  if (!post || post.status !== "published") return <Navigate to="/blog" replace />;
 
-  const author = getAuthor(insight.authorId);
-  const practiceArea = insight.practiceArea ? getPracticeArea(insight.practiceArea) : undefined;
-  const industry = insight.industry ? getIndustry(insight.industry) : undefined;
+  const author = getAuthor(post.authorId);
+  const practiceArea = post.practiceArea ? getPracticeArea(post.practiceArea) : undefined;
+  const industry = post.industry ? getIndustry(post.industry) : undefined;
 
-  const related = insights
-    .filter((post) => post.id !== insight.id && post.category === insight.category)
+  const related = posts
+    .filter((other) => other.id !== post.id && other.category === post.category)
     .slice(0, 3);
 
   return (
@@ -55,26 +53,26 @@ export default function InsightDetailPage() {
       <article>
         <Container className="pt-12 md:pt-16">
           <Link
-            to="/insights"
+            to="/blog"
             className="inline-flex items-center gap-2 text-xs uppercase tracking-eyebrow text-muted-foreground transition-colors hover:text-accent"
           >
             <ArrowLeft aria-hidden className="h-3.5 w-3.5" />
-            All Insights
+            All Posts
           </Link>
 
           <header className="mt-8 max-w-3xl">
             <div className="flex flex-wrap items-center gap-3">
-              <Badge variant="accent">{categoryLabel(insight.category)}</Badge>
+              <Badge variant="accent">{categoryLabel(post.category)}</Badge>
               <span className="text-xs text-muted-foreground">
-                {formatDate(insight.publishedAt)} · {readingTime(insight.body)} min read
+                {formatDate(post.publishedAt)} · {readingTime(post.body)} min read
               </span>
             </div>
 
             <h1 className="mt-6 font-display text-[2.25rem] leading-[1.15] text-primary md:text-[3rem]">
-              {insight.title}
+              {post.title}
             </h1>
 
-            <p className="mt-6 text-lg leading-relaxed text-muted-foreground">{insight.excerpt}</p>
+            <p className="mt-6 text-lg leading-relaxed text-muted-foreground">{post.excerpt}</p>
 
             {author ? (
               <div className="mt-8 flex items-center gap-4 border-t border-border pt-6">
@@ -95,10 +93,10 @@ export default function InsightDetailPage() {
 
         <Container className="mt-12">
           <CoverArt
-            seed={insight.slug}
-            label={insight.cover?.caption}
-            image={insight.cover?.image}
-            alt={insight.cover?.alt}
+            seed={post.slug}
+            label={post.cover?.caption}
+            image={post.cover?.image}
+            alt={post.cover?.alt}
             aspect="aspect-[21/9]"
             className="border border-border"
           />
@@ -107,11 +105,11 @@ export default function InsightDetailPage() {
         <Container className="py-14 md:py-20">
           <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_16rem] lg:gap-16">
             <div className="min-w-0 max-w-[68ch]">
-              <Markdown>{insight.body}</Markdown>
+              <Markdown>{post.body}</Markdown>
 
-              {insight.tags.length ? (
+              {post.tags.length ? (
                 <ul className="mt-12 flex flex-wrap gap-2 border-t border-border pt-8">
-                  {insight.tags.map((tag) => (
+                  {post.tags.map((tag) => (
                     <li
                       key={tag}
                       className="border border-border px-2.5 py-1 text-[0.6875rem] uppercase tracking-[0.1em] text-muted-foreground"
@@ -172,15 +170,15 @@ export default function InsightDetailPage() {
 
       {related.length ? (
         <Section tone="sand">
-          <SectionHeading eyebrow="More in this area" headline={categoryLabel(insight.category)} />
+          <SectionHeading eyebrow="More in this area" headline={categoryLabel(post.category)} />
           <div className="mt-12 grid gap-10 md:grid-cols-3">
             {related.map((post) => (
-              <InsightCard key={post.id} insight={post} />
+              <BlogCard key={post.id} post={post} />
             ))}
           </div>
           <Button asChild variant="outline" size="lg" className="mt-12">
-            <Link to="/insights">
-              View All Insights
+            <Link to="/blog">
+              View All Posts
               <ArrowRight aria-hidden />
             </Link>
           </Button>

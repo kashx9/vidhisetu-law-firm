@@ -3,7 +3,7 @@ import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
 
 /**
- * Long-form renderer used by insight articles, legal pages and the Studio
+ * Long-form renderer used by blog articles, legal pages and the Studio
  * preview pane. Styling comes from the `.prose-legal` block in index.css so
  * every long-form surface on the site reads identically.
  */

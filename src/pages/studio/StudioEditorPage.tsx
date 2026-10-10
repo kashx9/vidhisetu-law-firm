@@ -21,14 +21,14 @@ import { CoverArt } from "@/components/common/CoverArt";
 import { StudioGate } from "@/pages/studio/StudioGate";
 import { StatusBadge } from "@/pages/studio/StudioPage";
 import { usePageMeta } from "@/hooks/usePageMeta";
-import { insightCategories } from "@/content/insights/categories";
-import { authors } from "@/content/insights/authors";
+import { blogCategories } from "@/content/blog/categories";
+import { authors } from "@/content/blog/authors";
 import { industries } from "@/content/industries";
 import { practiceAreas } from "@/content/practiceAreas";
 import { site } from "@/content/site";
-import { insightRepository } from "@/features/blog/blogStore";
+import { postRepository } from "@/features/blog/blogStore";
 import { canPublish, currentSession } from "@/features/blog/auth";
-import type { Insight, InsightStatus } from "@/features/blog/types";
+import type { BlogPost, PostStatus } from "@/features/blog/types";
 import { readingTime, slugify } from "@/lib/utils";
 
 /** Cover images are inlined as data URLs, so keep them small. */
@@ -36,13 +36,13 @@ const MAX_COVER_BYTES = 1_500_000;
 
 const NONE = "__none__";
 
-const blankInsight = (authorId: string): Insight => ({
+const blankPost = (authorId: string): BlogPost => ({
   id: "",
   slug: "",
   title: "",
   excerpt: "",
   body: "## Start here\n\nWrite the article in Markdown. Headings, lists, tables, quotes and links all render on the published page.\n",
-  category: insightCategories[0].slug,
+  category: blogCategories[0].slug,
   tags: [],
   authorId,
   publishedAt: new Date().toISOString().slice(0, 10),
@@ -52,7 +52,7 @@ const blankInsight = (authorId: string): Insight => ({
 });
 
 export default function StudioEditorPage() {
-  usePageMeta({ title: `Insights Studio — ${site.name}` });
+  usePageMeta({ title: `Blog Studio — ${site.name}` });
   return (
     <StudioGate>
       <Editor />
@@ -67,8 +67,8 @@ function Editor() {
   const mayPublish = canPublish();
   const isNew = !id || id === "new";
 
-  const [draft, setDraft] = React.useState<Insight>(() =>
-    blankInsight(session?.authorId ?? authors[0].id),
+  const [draft, setDraft] = React.useState<BlogPost>(() =>
+    blankPost(session?.authorId ?? authors[0].id),
   );
   const [loading, setLoading] = React.useState(!isNew);
   const [slugLocked, setSlugLocked] = React.useState(!isNew);
@@ -77,7 +77,7 @@ function Editor() {
 
   React.useEffect(() => {
     if (isNew) return;
-    void insightRepository.findById(id!).then((found) => {
+    void postRepository.findById(id!).then((found) => {
       if (found) {
         setDraft(found);
         setTagInput(found.tags.join(", "));
@@ -86,7 +86,7 @@ function Editor() {
     });
   }, [id, isNew]);
 
-  const set = <K extends keyof Insight>(key: K, value: Insight[K]) =>
+  const set = <K extends keyof BlogPost>(key: K, value: BlogPost[K]) =>
     setDraft((current) => ({ ...current, [key]: value }));
 
   const onTitleChange = (title: string) => {
@@ -130,7 +130,7 @@ function Editor() {
     return null;
   };
 
-  const persist = async (status: InsightStatus) => {
+  const persist = async (status: PostStatus) => {
     const problem = validate();
     if (problem) {
       toast.error(problem);
@@ -143,7 +143,7 @@ function Editor() {
 
     setSaving(true);
     try {
-      const saved = await insightRepository.save({
+      const saved = await postRepository.save({
         ...draft,
         id: draft.id || undefined,
         slug: draft.slug || slugify(draft.title),
@@ -155,12 +155,12 @@ function Editor() {
       });
       toast.success(
         status === "published"
-          ? "Published. It is live on /insights now."
+          ? "Published. It is live on /blog now."
           : status === "in_review"
             ? "Sent for review."
             : "Draft saved.",
       );
-      navigate(`/insights/studio/${saved.id}`, { replace: true });
+      navigate(`/blog/studio/${saved.id}`, { replace: true });
       setDraft(saved);
     } catch (error) {
       toast.error("Could not save.", { description: String(error) });
@@ -182,14 +182,14 @@ function Editor() {
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-6">
         <div>
           <Link
-            to="/insights/studio"
+            to="/blog/studio"
             className="inline-flex items-center gap-2 text-xs uppercase tracking-eyebrow text-muted-foreground transition-colors hover:text-accent"
           >
             <ArrowLeft aria-hidden className="h-3.5 w-3.5" />
-            All insights
+            All posts
           </Link>
           <h1 className="mt-4 font-display text-2xl text-primary md:text-3xl">
-            {isNew ? "New insight" : "Edit insight"}
+            {isNew ? "New post" : "Edit post"}
           </h1>
           <p className="mt-2 text-xs text-muted-foreground">
             {draft.body.trim().split(/\s+/).filter(Boolean).length} words ·{" "}
@@ -259,7 +259,7 @@ function Editor() {
               onChange={(event) => set("slug", slugify(event.target.value))}
             />
             <p className="text-xs text-muted-foreground">
-              /insights/{draft.slug || "your-article-slug"}
+              /blog/{draft.slug || "your-article-slug"}
             </p>
           </div>
 
@@ -320,7 +320,7 @@ function Editor() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {insightCategories.map((category) => (
+                  {blogCategories.map((category) => (
                     <SelectItem key={category.slug} value={category.slug}>
                       {category.label}
                     </SelectItem>
@@ -407,7 +407,7 @@ function Editor() {
                 onCheckedChange={(checked) => set("featured", checked === true)}
               />
               <span className="text-xs leading-relaxed text-muted-foreground">
-                Feature this article — it takes the lead position on the Insights page.
+                Feature this article — it takes the lead position on the blog listing.
               </span>
             </label>
           </Panel>

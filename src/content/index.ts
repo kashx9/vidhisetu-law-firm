@@ -17,7 +17,7 @@
  *  about.ts            Firm story, values, team, engagement model.
  *  consultation.ts     Enquiry form options, routing table, process, thank-you.
  *  legal.ts            Privacy policy, website terms, disclaimer.
- *  insights/           Blog: categories, authors and seeded posts.
+ *  blog/               Blog: categories, authors and seeded posts.
  *
  *  Nothing in this folder imports React. It is plain data, safe for a
  *  non-developer to edit.
@@ -42,9 +42,9 @@ export {
   thankYou,
 } from "./consultation";
 export { legalDocuments, getLegalDocument } from "./legal";
-export { insightCategories, getCategory, categoryLabel } from "./insights/categories";
-export { authors, getAuthor } from "./insights/authors";
-export { seedInsights } from "./insights/posts";
+export { blogCategories, getCategory, categoryLabel } from "./blog/categories";
+export { authors, getAuthor } from "./blog/authors";
+export { seedPosts } from "./blog/posts";
 
 export type { NavItem, NavLink } from "./navigation";
 export type { PracticeArea } from "./practiceAreas";
@@ -55,5 +55,5 @@ export type { JourneyStage } from "./startupJourney";
 export type { RetainerPlan } from "./retainers";
 export type { TeamMember, Value } from "./about";
 export type { LegalDocument } from "./legal";
-export type { InsightCategory } from "./insights/categories";
-export type { Author } from "./insights/authors";
+export type { BlogCategory } from "./blog/categories";
+export type { Author } from "./blog/authors";

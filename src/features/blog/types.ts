@@ -1,16 +1,16 @@
 /**
- * Shared types for the Insights (blog) subsystem.
+ * Shared types for the blog subsystem.
  *
- * The same `Insight` shape is used by the published mock data in
- * src/content/insights/posts.ts and by the authoring flow in the Insights
- * Studio, so a drafted post and a seeded post are indistinguishable to the
+ * The same `BlogPost` shape is used by the published mock data in
+ * src/content/blog/posts.ts and by the authoring flow in the Blog Studio,
+ * so a drafted post and a seeded post are indistinguishable to the
  * rendering layer.
  */
 
 /** A post moves left to right. Only `published` posts appear on public pages. */
-export type InsightStatus = "draft" | "in_review" | "published" | "archived";
+export type PostStatus = "draft" | "in_review" | "published" | "archived";
 
-export const statusLabels: Record<InsightStatus, string> = {
+export const statusLabels: Record<PostStatus, string> = {
   draft: "Draft",
   in_review: "In review",
   published: "Published",
@@ -18,14 +18,14 @@ export const statusLabels: Record<InsightStatus, string> = {
 };
 
 /** Which transitions the UI offers from each state. */
-export const statusTransitions: Record<InsightStatus, InsightStatus[]> = {
+export const statusTransitions: Record<PostStatus, PostStatus[]> = {
   draft: ["in_review"],
   in_review: ["published", "draft"],
   published: ["archived"],
   archived: ["draft"],
 };
 
-export type Insight = {
+export type BlogPost = {
   id: string;
   slug: string;
   title: string;
@@ -34,7 +34,7 @@ export type Insight = {
   /** Markdown. Rendered with react-markdown + remark-gfm. */
   body: string;
 
-  /** Category slug from src/content/insights/categories.ts. */
+  /** Category slug from src/content/blog/categories.ts. */
   category: string;
   /** Optional industry slug from src/content/industries.ts. */
   industry?: string;
@@ -42,14 +42,14 @@ export type Insight = {
   practiceArea?: string;
   tags: string[];
 
-  /** Author id from src/content/insights/authors.ts. */
+  /** Author id from src/content/blog/authors.ts. */
   authorId: string;
 
   /** ISO date. Sorting and display both use this. */
   publishedAt: string;
   updatedAt?: string;
 
-  status: InsightStatus;
+  status: PostStatus;
   /** At most one or two posts should carry this; it drives the lead card. */
   featured: boolean;
 
@@ -71,4 +71,4 @@ export type Insight = {
 };
 
 /** The subset of fields the Studio editor collects. */
-export type InsightDraftInput = Omit<Insight, "id" | "source"> & { id?: string };
+export type BlogPostDraft = Omit<BlogPost, "id" | "source"> & { id?: string };

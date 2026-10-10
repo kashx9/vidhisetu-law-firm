@@ -2,7 +2,7 @@
  * Route smoke test.
  *
  * Server-renders every public route — including the pages generated from
- * src/content/practiceAreas.ts, industries.ts, legal.ts and insights/posts.ts —
+ * src/content/practiceAreas.ts, industries.ts, legal.ts and blog/posts.ts —
  * and fails if any of them throws or comes back empty. Run it after editing
  * anything in src/content to confirm a content change has not broken a page.
  *

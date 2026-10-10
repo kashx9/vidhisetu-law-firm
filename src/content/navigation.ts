@@ -48,7 +48,7 @@ export const primaryNav: NavItem[] = [
     ],
   },
   { label: "Our Approach", href: "/approach" },
-  { label: "Insights", href: "/insights" },
+  { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -83,7 +83,7 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
       { label: "About Us", href: "/about" },
       { label: "Our Approach", href: "/approach" },
       { label: "Startup Legal Services", href: "/startup-legal" },
-      { label: "Insights", href: "/insights" },
+      { label: "Blog", href: "/blog" },
       { label: "Contact", href: "/contact" },
       { label: "Book a Consultation", href: "/contact" },
     ],

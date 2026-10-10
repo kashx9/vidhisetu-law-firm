@@ -16,19 +16,18 @@ import IndustryDetailPage from "@/pages/IndustryDetailPage";
 import ApproachPage from "@/pages/ApproachPage";
 import RetainersPage from "@/pages/RetainersPage";
 import StartupLegalPage from "@/pages/StartupLegalPage";
-import InsightsPage from "@/pages/InsightsPage";
-import InsightDetailPage from "@/pages/InsightDetailPage";
+import BlogPage from "@/pages/BlogPage";
+import BlogPostPage from "@/pages/BlogPostPage";
 import ContactPage from "@/pages/ContactPage";
 import ThankYouPage from "@/pages/ThankYouPage";
 import LegalPage from "@/pages/LegalPage";
-import ClientLoginPage from "@/pages/ClientLoginPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import StudioPage from "@/pages/studio/StudioPage";
 import StudioEditorPage from "@/pages/studio/StudioEditorPage";
 import { practiceAreas } from "@/content/practiceAreas";
 import { industries } from "@/content/industries";
 import { legalDocuments } from "@/content/legal";
-import { seedInsights } from "@/content/insights/posts";
+import { seedPosts } from "@/content/blog/posts";
 
 function Tree({ path }: { path: string }) {
   return (
@@ -44,14 +43,13 @@ function Tree({ path }: { path: string }) {
           <Route path="approach" element={<ApproachPage />} />
           <Route path="legal-retainers" element={<RetainersPage />} />
           <Route path="startup-legal" element={<StartupLegalPage />} />
-          <Route path="insights" element={<InsightsPage />} />
-          <Route path="insights/studio" element={<StudioPage />} />
-          <Route path="insights/studio/:id" element={<StudioEditorPage />} />
-          <Route path="insights/:slug" element={<InsightDetailPage />} />
+          <Route path="blog" element={<BlogPage />} />
+          <Route path="blog/studio" element={<StudioPage />} />
+          <Route path="blog/studio/:id" element={<StudioEditorPage />} />
+          <Route path="blog/:slug" element={<BlogPostPage />} />
           <Route path="contact" element={<ContactPage />} />
           <Route path="thank-you" element={<ThankYouPage />} />
           <Route path="legal/:slug" element={<LegalPage />} />
-          <Route path="client-login" element={<ClientLoginPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
@@ -69,14 +67,13 @@ const routes = [
   "/approach",
   "/legal-retainers",
   "/startup-legal",
-  "/insights",
-  ...seedInsights.filter((p) => p.status === "published").map((p) => `/insights/${p.slug}`),
-  "/insights/studio",
-  "/insights/studio/new",
+  "/blog",
+  ...seedPosts.filter((p) => p.status === "published").map((p) => `/blog/${p.slug}`),
+  "/blog/studio",
+  "/blog/studio/new",
   "/contact",
   "/thank-you",
   ...legalDocuments.map((d) => `/legal/${d.slug}`),
-  "/client-login",
   "/not-a-real-page",
 ];
 

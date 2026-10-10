@@ -12,32 +12,32 @@ import {
 } from "@/components/ui/select";
 import { PageHero } from "@/components/common/PageHero";
 import { Section } from "@/components/common/Section";
-import { InsightCard } from "@/components/common/InsightCard";
+import { BlogCard } from "@/components/common/BlogCard";
 import { CoverArt } from "@/components/common/CoverArt";
 import { Reveal } from "@/components/common/Reveal";
 import { usePageMeta } from "@/hooks/usePageMeta";
-import { insightCategories } from "@/content/insights/categories";
+import { blogCategories } from "@/content/blog/categories";
 import { industries } from "@/content/industries";
 import { site } from "@/content/site";
-import { filterInsights, useInsights } from "@/features/blog/useInsights";
+import { filterPosts, useBlogPosts } from "@/features/blog/useBlogPosts";
 import { cn } from "@/lib/utils";
 
 /**
- * Insights listing — search, practice-area (category) filters and industry
+ * Blog listing — search, practice-area (category) filters and industry
  * filters, as the brief requires. Filter state lives in the URL so a filtered
  * view can be linked to and shared.
  */
-export default function InsightsPage() {
+export default function BlogPage() {
   const [params, setParams] = useSearchParams();
-  const { insights, loading } = useInsights();
+  const { posts, loading } = useBlogPosts();
 
   const query = params.get("q") ?? "";
   const category = params.get("category") ?? "all";
   const industry = params.get("industry") ?? "all";
 
   usePageMeta({
-    title: `Insights — ${site.name}`,
-    description: "Legal insights for better business decisions.",
+    title: `Blog — ${site.name}`,
+    description: "Practical legal commentary for business decision-makers.",
   });
 
   const update = (key: string, value: string) => {
@@ -48,8 +48,8 @@ export default function InsightsPage() {
   };
 
   const results = React.useMemo(
-    () => filterInsights(insights, { query, category, industry }),
-    [insights, query, category, industry],
+    () => filterPosts(posts, { query, category, industry }),
+    [posts, query, category, industry],
   );
 
   const hasFilters = query !== "" || category !== "all" || industry !== "all";
@@ -59,10 +59,10 @@ export default function InsightsPage() {
   return (
     <>
       <PageHero
-        eyebrow="Insights"
+        eyebrow="Blog"
         title="Legal Insights for Better Business Decisions."
         lead="Practical commentary on the legal questions our clients ask most often, written for business decision-makers rather than lawyers."
-        crumbs={[{ label: "Home", href: "/" }, { label: "Insights" }]}
+        crumbs={[{ label: "Home", href: "/" }, { label: "Blog" }]}
       />
 
       {/* Filter bar */}
@@ -77,8 +77,8 @@ export default function InsightsPage() {
               <Input
                 value={query}
                 onChange={(event) => update("q", event.target.value)}
-                placeholder="Search insights"
-                aria-label="Search insights"
+                placeholder="Search the blog"
+                aria-label="Search the blog"
                 className="pl-9"
               />
               {query ? (
@@ -109,9 +109,9 @@ export default function InsightsPage() {
               </Select>
 
               <Button asChild variant="ghost" size="sm" className="hidden shrink-0 lg:inline-flex">
-                <Link to="/insights/studio">
+                <Link to="/blog/studio">
                   <PenLine aria-hidden />
-                  Insights Studio
+                  Blog Studio
                 </Link>
               </Button>
             </div>
@@ -121,7 +121,7 @@ export default function InsightsPage() {
             <FilterChip active={category === "all"} onClick={() => update("category", "all")}>
               All
             </FilterChip>
-            {insightCategories.map((item) => (
+            {blogCategories.map((item) => (
               <FilterChip
                 key={item.slug}
                 active={category === item.slug}
@@ -155,7 +155,7 @@ export default function InsightsPage() {
 
         {!loading && results.length === 0 ? (
           <div className="mt-16 border border-border bg-card px-8 py-20 text-center">
-            <p className="font-display text-2xl text-primary">No insights match that search.</p>
+            <p className="font-display text-2xl text-primary">No posts match that search.</p>
             <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
               Try a broader term, or clear the filters. If you are looking for advice on a specific
               matter, a consultation will get you a faster answer than an article.
@@ -168,7 +168,7 @@ export default function InsightsPage() {
 
         {showLead ? (
           <Link
-            to={`/insights/${lead.slug}`}
+            to={`/blog/${lead.slug}`}
             className="group mt-10 grid gap-8 border-b border-border pb-12 md:grid-cols-2 md:items-center md:gap-12"
           >
             <div className="order-2 md:order-1">
@@ -194,9 +194,9 @@ export default function InsightsPage() {
         ) : null}
 
         <div className="mt-12 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
-          {(showLead ? rest : results).map((insight, index) => (
-            <Reveal key={insight.id} delay={index * 40}>
-              <InsightCard insight={insight} />
+          {(showLead ? rest : results).map((post, index) => (
+            <Reveal key={post.id} delay={index * 40}>
+              <BlogCard post={post} />
             </Reveal>
           ))}
         </div>

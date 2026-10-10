@@ -21,7 +21,7 @@ export function StickyConsultBar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  if (pathname === "/contact" || pathname.startsWith("/insights/studio")) return null;
+  if (pathname === "/contact" || pathname.startsWith("/blog/studio")) return null;
 
   return (
     <div

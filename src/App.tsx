@@ -10,16 +10,15 @@ import IndustryDetailPage from "@/pages/IndustryDetailPage";
 import ApproachPage from "@/pages/ApproachPage";
 import RetainersPage from "@/pages/RetainersPage";
 import StartupLegalPage from "@/pages/StartupLegalPage";
-import InsightsPage from "@/pages/InsightsPage";
+import BlogPage from "@/pages/BlogPage";
 import ContactPage from "@/pages/ContactPage";
 import ThankYouPage from "@/pages/ThankYouPage";
-import ClientLoginPage from "@/pages/ClientLoginPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 
 // Long-form and authoring routes pull in the markdown renderer, which is the
 // heaviest dependency on the site. Splitting them keeps it out of the bundle
 // every visitor downloads.
-const InsightDetailPage = lazy(() => import("@/pages/InsightDetailPage"));
+const BlogPostPage = lazy(() => import("@/pages/BlogPostPage"));
 const LegalPage = lazy(() => import("@/pages/LegalPage"));
 const StudioPage = lazy(() => import("@/pages/studio/StudioPage"));
 const StudioEditorPage = lazy(() => import("@/pages/studio/StudioEditorPage"));
@@ -29,7 +28,7 @@ const StudioEditorPage = lazy(() => import("@/pages/studio/StudioEditorPage"));
  * src/content/practiceAreas.ts and src/content/industries.ts, so adding an
  * entry to those files creates a working page with no routing change.
  *
- * NOTE: the two Studio routes must be declared before /insights/:slug,
+ * NOTE: the two Studio routes must be declared before /blog/:slug,
  * otherwise "studio" would be matched as an article slug.
  */
 export default function App() {
@@ -51,15 +50,14 @@ export default function App() {
             <Route path="legal-retainers" element={<RetainersPage />} />
             <Route path="startup-legal" element={<StartupLegalPage />} />
 
-            <Route path="insights" element={<InsightsPage />} />
-            <Route path="insights/studio" element={<StudioPage />} />
-            <Route path="insights/studio/:id" element={<StudioEditorPage />} />
-            <Route path="insights/:slug" element={<InsightDetailPage />} />
+            <Route path="blog" element={<BlogPage />} />
+            <Route path="blog/studio" element={<StudioPage />} />
+            <Route path="blog/studio/:id" element={<StudioEditorPage />} />
+            <Route path="blog/:slug" element={<BlogPostPage />} />
 
             <Route path="contact" element={<ContactPage />} />
             <Route path="thank-you" element={<ThankYouPage />} />
             <Route path="legal/:slug" element={<LegalPage />} />
-            <Route path="client-login" element={<ClientLoginPage />} />
 
             <Route path="*" element={<NotFoundPage />} />
           </Route>

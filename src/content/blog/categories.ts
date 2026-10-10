@@ -1,15 +1,15 @@
 /**
- * INSIGHT CATEGORIES — the filter set on /insights and the category chip on
+ * BLOG CATEGORIES — the filter set on /blog and the category chip on
  * every post. Taken from the brief's Section 10.
  */
 
-export type InsightCategory = {
+export type BlogCategory = {
   slug: string;
   label: string;
   description: string;
 };
 
-export const insightCategories: InsightCategory[] = [
+export const blogCategories: BlogCategory[] = [
   {
     slug: "corporate-law",
     label: "Corporate Law",
@@ -47,6 +47,6 @@ export const insightCategories: InsightCategory[] = [
   },
 ];
 
-export const getCategory = (slug: string) => insightCategories.find((c) => c.slug === slug);
+export const getCategory = (slug: string) => blogCategories.find((c) => c.slug === slug);
 
 export const categoryLabel = (slug: string) => getCategory(slug)?.label ?? slug;

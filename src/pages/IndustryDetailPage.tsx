@@ -4,18 +4,18 @@ import { Button } from "@/components/ui/button";
 import { PageHero } from "@/components/common/PageHero";
 import { Section, SectionHeading } from "@/components/common/Section";
 import { Reveal } from "@/components/common/Reveal";
-import { InsightCard } from "@/components/common/InsightCard";
+import { BlogCard } from "@/components/common/BlogCard";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { getIndustry, industries } from "@/content/industries";
 import { getPracticeArea } from "@/content/practiceAreas";
 import { site } from "@/content/site";
-import { useInsights } from "@/features/blog/useInsights";
+import { useBlogPosts } from "@/features/blog/useBlogPosts";
 import { getIcon } from "@/lib/icons";
 
 export default function IndustryDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const industry = slug ? getIndustry(slug) : undefined;
-  const { insights } = useInsights();
+  const { posts } = useBlogPosts();
 
   usePageMeta({
     title: industry ? `${industry.title} — ${site.name}` : site.name,
@@ -24,7 +24,7 @@ export default function IndustryDetailPage() {
 
   if (!industry) return <Navigate to="/industries" replace />;
 
-  const related = insights.filter((post) => post.industry === industry.slug).slice(0, 3);
+  const related = posts.filter((post) => post.industry === industry.slug).slice(0, 3);
   const others = industries.filter((item) => item.slug !== industry.slug);
 
   return (
@@ -118,11 +118,11 @@ export default function IndustryDetailPage() {
 
       {related.length ? (
         <Section>
-          <SectionHeading eyebrow="Insights" headline="Written for This Sector." />
+          <SectionHeading eyebrow="From the Blog" headline="Written for This Sector." />
           <div className="mt-12 grid gap-10 md:grid-cols-3">
-            {related.map((insight, index) => (
-              <Reveal key={insight.id} delay={index * 50}>
-                <InsightCard insight={insight} />
+            {related.map((post, index) => (
+              <Reveal key={post.id} delay={index * 50}>
+                <BlogCard post={post} />
               </Reveal>
             ))}
           </div>

@@ -11,8 +11,7 @@ import { cn } from "@/lib/utils";
 /**
  * Sticky header. Transparent-to-solid on scroll, dropdown panels for the two
  * menus that have children, and a full-screen sheet on mobile.
- * "Book a Consultation" is the only filled button; Client Login is kept
- * visually secondary as the brief requires.
+ * "Book a Consultation" is the only filled button in the header.
  */
 export function Header() {
   const [scrolled, setScrolled] = React.useState(false);
@@ -113,12 +112,6 @@ export function Header() {
         </nav>
 
         <div className="hidden items-center gap-5 lg:flex">
-          <Link
-            to={site.cta.login.href}
-            className="text-[0.8125rem] text-muted-foreground transition-colors hover:text-accent"
-          >
-            {site.cta.login.label}
-          </Link>
           <Button asChild size="sm">
             <Link to={site.cta.primary.href}>{site.cta.primary.label}</Link>
           </Button>
@@ -153,12 +146,6 @@ export function Header() {
               <Button asChild variant="outline" size="lg">
                 <a href={`tel:${site.contact.phoneHref}`}>Call {site.contact.phone}</a>
               </Button>
-              <Link
-                to={site.cta.login.href}
-                className="py-2 text-center text-[0.8125rem] text-muted-foreground"
-              >
-                {site.cta.login.label}
-              </Link>
             </div>
           </Container>
         </div>

@@ -8,26 +8,26 @@ import { Input } from "@/components/ui/input";
 import { Container } from "@/components/common/Section";
 import { StudioGate } from "@/pages/studio/StudioGate";
 import { usePageMeta } from "@/hooks/usePageMeta";
-import { categoryLabel } from "@/content/insights/categories";
-import { getAuthor } from "@/content/insights/authors";
+import { categoryLabel } from "@/content/blog/categories";
+import { getAuthor } from "@/content/blog/authors";
 import { site } from "@/content/site";
-import { exportInsights, insightRepository, resetLocalInsights } from "@/features/blog/blogStore";
+import { exportPosts, postRepository, resetLocalPosts } from "@/features/blog/blogStore";
 import {
   statusLabels,
   statusTransitions,
-  type Insight,
-  type InsightStatus,
+  type BlogPost,
+  type PostStatus,
 } from "@/features/blog/types";
-import { useInsights } from "@/features/blog/useInsights";
+import { useBlogPosts } from "@/features/blog/useBlogPosts";
 import { canPublish, currentSession } from "@/features/blog/auth";
 import { formatDate } from "@/lib/utils";
 
 /**
- * INSIGHTS STUDIO — the authoring dashboard.
+ * BLOG STUDIO — the authoring dashboard.
  * Lists every post in every state and drives the draft → review → publish flow.
  */
 export default function StudioPage() {
-  usePageMeta({ title: `Insights Studio — ${site.name}` });
+  usePageMeta({ title: `Blog Studio — ${site.name}` });
   return (
     <StudioGate>
       <StudioDashboard />
@@ -36,50 +36,50 @@ export default function StudioPage() {
 }
 
 function StudioDashboard() {
-  const { insights, loading } = useInsights({ includeUnpublished: true });
-  const [filter, setFilter] = React.useState<InsightStatus | "all">("all");
+  const { posts, loading } = useBlogPosts({ includeUnpublished: true });
+  const [filter, setFilter] = React.useState<PostStatus | "all">("all");
   const [query, setQuery] = React.useState("");
   const session = currentSession();
   const mayPublish = canPublish();
 
   const counts = React.useMemo(() => {
-    const base: Record<string, number> = { all: insights.length };
-    for (const post of insights) base[post.status] = (base[post.status] ?? 0) + 1;
+    const base: Record<string, number> = { all: posts.length };
+    for (const post of posts) base[post.status] = (base[post.status] ?? 0) + 1;
     return base;
-  }, [insights]);
+  }, [posts]);
 
-  const visible = insights.filter((post) => {
+  const visible = posts.filter((post) => {
     if (filter !== "all" && post.status !== filter) return false;
     if (!query.trim()) return true;
     return post.title.toLowerCase().includes(query.trim().toLowerCase());
   });
 
-  const move = async (post: Insight, status: InsightStatus) => {
+  const move = async (post: BlogPost, status: PostStatus) => {
     if (status === "published" && !mayPublish) {
       toast.error("Only an editor can publish.", {
-        description: "Sign in with the editor role to publish this insight.",
+        description: "Ask an editor to publish it, or sign in with an editor account.",
       });
       return;
     }
-    await insightRepository.setStatus(post.id, status);
+    await postRepository.setStatus(post.id, status);
     toast.success(`"${post.title}" moved to ${statusLabels[status].toLowerCase()}.`);
   };
 
-  const remove = async (post: Insight) => {
+  const remove = async (post: BlogPost) => {
     if (!mayPublish) {
-      toast.error("Only an editor can delete an insight.");
+      toast.error("Only an editor can delete a post.");
       return;
     }
     if (!window.confirm(`Delete "${post.title}"? This cannot be undone from the Studio.`)) return;
-    await insightRepository.remove(post.id);
-    toast.success("Insight deleted.");
+    await postRepository.remove(post.id);
+    toast.success("BlogPost deleted.");
   };
 
   const exportJson = async () => {
-    const json = await exportInsights();
+    const json = await exportPosts();
     await navigator.clipboard.writeText(json).catch(() => undefined);
-    toast.success("Insights JSON copied to clipboard.", {
-      description: "Paste it into src/content/insights/posts.ts or POST it to your CMS.",
+    toast.success("Blog JSON copied to clipboard.", {
+      description: "Paste it into src/content/blog/posts.ts or POST it to your CMS.",
     });
   };
 
@@ -87,13 +87,14 @@ function StudioDashboard() {
     <Container className="py-12 md:py-16">
       <header className="flex flex-col gap-6 border-b border-border pb-8 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="eyebrow">Insights Studio</p>
+          <p className="eyebrow">Blog Studio</p>
           <h1 className="mt-3 font-display text-3xl text-primary md:text-4xl">
             Write, review and publish.
           </h1>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            Signed in as <strong className="text-primary">{session?.name}</strong> ·{" "}
-            {session?.role === "editor" ? "Editor — can publish" : "Author — can draft and submit"}
+            {session?.role === "editor"
+              ? "As an editor you can write, publish, archive and delete posts."
+              : "As an author you can write and edit drafts, and send them to an editor for review."}
           </p>
         </div>
 
@@ -109,7 +110,7 @@ function StudioDashboard() {
               if (
                 window.confirm("Discard all Studio drafts and edits, and restore seeded posts?")
               ) {
-                resetLocalInsights();
+                resetLocalPosts();
                 toast.success("Studio content reset to the seeded posts.");
               }
             }}
@@ -118,9 +119,9 @@ function StudioDashboard() {
             Reset
           </Button>
           <Button asChild size="sm">
-            <Link to="/insights/studio/new">
+            <Link to="/blog/studio/new">
               <Plus aria-hidden />
-              New insight
+              New post
             </Link>
           </Button>
         </div>
@@ -197,7 +198,7 @@ function StudioDashboard() {
                 <tr key={post.id} className="border-b border-border last:border-0">
                   <td className="px-5 py-4">
                     <Link
-                      to={`/insights/studio/${post.id}`}
+                      to={`/blog/studio/${post.id}`}
                       className="font-medium text-primary hover:text-accent"
                     >
                       {post.title}
@@ -220,7 +221,7 @@ function StudioDashboard() {
                     <div className="flex flex-wrap items-center justify-end gap-2">
                       {post.status === "published" ? (
                         <Button asChild variant="ghost" size="sm">
-                          <Link to={`/insights/${post.slug}`}>
+                          <Link to={`/blog/${post.slug}`}>
                             <Eye aria-hidden />
                             View
                           </Link>
@@ -272,7 +273,7 @@ function StudioDashboard() {
           </li>
           <li>
             <strong className="text-primary">3. Publish.</strong> An editor publishes; the post
-            appears on /insights and the homepage immediately.
+            appears on /blog and the homepage immediately.
           </li>
           <li>
             <strong className="text-primary">4. Archive.</strong> Retires a post without deleting
@@ -289,7 +290,7 @@ function StudioDashboard() {
   );
 }
 
-export function StatusBadge({ status }: { status: InsightStatus }) {
+export function StatusBadge({ status }: { status: PostStatus }) {
   const variant = status === "published" ? "accent" : status === "in_review" ? "solid" : "outline";
   return <Badge variant={variant}>{statusLabels[status]}</Badge>;
 }

@@ -1,5 +1,5 @@
 /**
- * INSIGHT AUTHORS — the byline directory.
+ * BLOG AUTHORS — the byline directory.
  *
  * Author ids are referenced by `authorId` on each post. Keeping them here means
  * a role change or a new joiner is a one-line edit rather than a find-and-replace

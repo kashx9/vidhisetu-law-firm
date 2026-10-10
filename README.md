@@ -12,6 +12,9 @@ npm run build    # production build to dist/
 npm run smoke    # render-test every route (run after editing content)
 ```
 
+**Writing a blog post?** See [docs/BLOG-STUDIO.md](docs/BLOG-STUDIO.md) — a non-technical guide for
+the firm's authors and editors.
+
 ---
 
 ## The one rule: everything lives in `src/content/`
@@ -34,10 +37,14 @@ details and design tokens live in one folder:
 | `about.ts` | Firm story, values, team, engagement model. |
 | `consultation.ts` | Enquiry form options, **practice-area routing table**, process, thank-you copy. |
 | `legal.ts` | Privacy policy, website terms, disclaimer (markdown). |
-| `insights/` | Blog categories, authors and seeded posts. |
+| `blog/` | Blog categories, authors and the seeded posts. |
 
 Nothing in `src/content/` imports React — it is plain data, safe to hand to a non-developer.
 Icons are referenced by name (`"shield"`, `"rocket"`) and resolved through `src/lib/icons.ts`.
+
+> Blog **accounts and passwords** are the one exception: they live in
+> `src/features/blog/accounts.ts`, not in the content folder, because they are credentials rather
+> than copy.
 
 ### Adding a practice area or industry
 
@@ -58,35 +65,64 @@ hairline rules. It follows the brief's direction — premium, trust-led, no gave
 imagery, no SaaS-style rounded cards, no gradients. Replace it wholesale when the real design system
 arrives.
 
+The header is a **type-only wordmark** (`src/components/common/Logo.tsx`) — no symbol. If a logo
+asset arrives, render it there.
+
 ---
 
-## Publishing a blog post (Insights)
-
-The full flow, and where to plug in a real backend, is documented at the top of
-`src/features/blog/blogStore.ts`. In short:
+## The blog
 
 ```
-/insights/studio  →  New insight  →  write  →  Save draft
-                         ↓
-                  Send for review        (status: in_review)
-                         ↓
-                  Publish (editors only) (status: published → live on /insights)
-                         ↓
-                  Archive                (retires without deleting)
+/blog               public listing — search, category and industry filters
+/blog/:slug         an article
+/blog/studio        the Studio: sign-in, then the authoring dashboard
+/blog/studio/:id    the editor ("new" for a fresh post)
 ```
 
-**The Studio** (`/insights/studio`) is the authoring dashboard: every post in every state, with
-filters, status transitions, delete and a JSON export. The editor gives you title (auto-slug),
-excerpt, category, practice area, industry, tags, author, publication date, featured flag, cover
-image upload, SEO fields, and a markdown body with a live preview tab.
+Publishing flow, enforced by `statusTransitions` in `src/features/blog/types.ts`:
 
-**Only `published` posts are public.** Drafts and in-review posts are invisible on `/insights` and
-return a redirect if their URL is guessed.
+```
+draft ──► in_review ──► published ──► archived
+                            │            │
+                            └── public ──┘ (archived is not public)
+```
+
+**Only `published` posts are public.** Drafts and in-review posts are invisible on `/blog`, and a
+guessed URL redirects to the listing.
+
+### Accounts
+
+Three real accounts, in `src/features/blog/accounts.ts`:
+
+| Email | Role | Can |
+| --- | --- | --- |
+| `meera@vidhisetu.in` | editor | write, publish, archive, delete |
+| `sanya@vidhisetu.in` | editor | write, publish, archive, delete |
+| `rohan@vidhisetu.in` | author | write, edit, send for review |
+
+Passwords are stored only as **PBKDF2-SHA256** hashes (210,000 iterations, per-account 16-byte
+salt) and re-derived in the browser via Web Crypto at sign-in. Sessions last 12 hours. Removing an
+account from `accounts.ts` invalidates any session for it on next load.
+
+To change or set a password:
+
+```bash
+node scripts/hash-password.mjs "the new password"
+# paste the printed salt + hash over that account's entry
+```
+
+> **Security limit — read before launch.** This is browser-side authentication: the hash list ships
+> in the JS bundle, so it can be attacked offline or bypassed by editing the client. It is a real
+> password gate, enough to keep the Studio private from visitors and to attribute posts correctly,
+> but it is **not a security boundary**. Move the check to a server before the site holds anything
+> confidential. `signIn` / `currentSession` / `canAuthor` / `canPublish` in
+> `src/features/blog/auth.ts` are the only four things the UI calls, so swapping in a server session
+> needs no component changes.
 
 ### Three ways to get a post onto the site
 
 1. **Through the Studio** — write it in the browser. Stored in `localStorage` for now.
-2. **By hand** — add an object to `src/content/insights/posts.ts` with `status: "published"`.
+2. **By hand** — add an object to `src/content/blog/posts.ts` with `status: "published"`.
    This is how the eight seeded articles work.
 3. **From a backend** — see below.
 
@@ -95,23 +131,16 @@ never destroys drafts and clearing drafts never destroys `posts.ts`.
 
 ### Swapping the mock store for a real backend
 
-`src/features/blog/blogStore.ts` defines an `InsightRepository` interface with five methods. A
+`src/features/blog/blogStore.ts` defines a `BlogPostRepository` interface with seven methods. A
 `LocalDraftRepository` (localStorage) and an `HttpRepository` (stubbed) both implement it. Point it
 at a real API with two environment variables:
 
 ```bash
-VITE_INSIGHTS_BACKEND=http
-VITE_INSIGHTS_API=https://api.example.com
+VITE_BLOG_BACKEND=http
+VITE_BLOG_API=https://api.example.com
 ```
 
-No component changes — the UI only ever talks to the hooks in `useInsights.ts`.
-
-### Authoring access
-
-`src/features/blog/auth.ts` is a **mock gate** — choosing an author and a role is the whole
-"login", with no password check. Two roles exist: `author` (draft, submit for review) and `editor`
-(also publish, archive, delete). Replace the three functions in that file with a real session check
-and the entire Studio is secured. **Do not deploy the Studio as-is.**
+No component changes — the UI only ever talks to the hooks in `useBlogPosts.ts`.
 
 ---
 
@@ -120,24 +149,30 @@ and the entire Studio is secured. **Do not deploy the Studio as-is.**
 ```
 src/
   content/          ← all copy, data and design tokens (edit here)
+    blog/           categories, authors, seeded posts
   components/
     ui/             shadcn/ui primitives (button, card, select, dialog, …)
-    common/         Section, PageHero, Logo, CoverArt, Markdown, Reveal, InsightCard
+    common/         Section, PageHero, Logo, CoverArt, Markdown, Reveal, BlogCard
     layout/         Header, Footer, SiteLayout, StickyConsultBar
     sections/       the eleven homepage sections
     forms/          ConsultationForm
-  features/blog/    types, store, auth, hooks — the Insights subsystem
+  features/blog/    types, store, accounts, auth, hooks — the blog subsystem
   pages/            one file per route; studio/ holds the authoring screens
   lib/              utils, icon registry
   hooks/            usePageMeta
+scripts/            smoke test + password hashing tool
+docs/               BLOG-STUDIO.md — the guide for writers
 ```
 
 ## Routes
 
 `/` · `/about` · `/practice-areas` · `/practice-areas/:slug` · `/industries` · `/industries/:slug` ·
-`/approach` · `/legal-retainers` · `/startup-legal` · `/insights` · `/insights/:slug` ·
-`/insights/studio` · `/insights/studio/:id` · `/contact` · `/thank-you` · `/legal/:slug` ·
-`/client-login`
+`/approach` · `/legal-retainers` · `/startup-legal` · `/blog` · `/blog/:slug` · `/blog/studio` ·
+`/blog/studio/:id` · `/contact` · `/thank-you` · `/legal/:slug`
+
+Navigation is **About Us · Practice Areas · Industries · Our Approach · Blog · Contact**, plus the
+one "Book a Consultation" button. The Studio is intentionally not in the public menu — it is reached
+from the discreet link on `/blog` or by its URL.
 
 ---
 
@@ -149,14 +184,15 @@ Everything below is deliberately placeholder and needs replacing before launch:
   (with the resolved routing mailbox) instead of posting it. It is also where the conversion
   tracking event should fire.
 - **Blog storage** — browser `localStorage`, per the section above.
-- **Studio authentication** — no password check.
-- **Client Login** — a disabled placeholder screen; the real portal is a separate system.
+- **Studio authentication** — a real password check, but client-side; see the security note above.
 - **Firm details** — team members, offices, phone, email, statistics in the hero, and the
   routing mailboxes in `consultation.ts` are all invented.
 - **Legal pages** — privacy policy, terms and disclaimer are placeholder drafting. Have the firm's
   own compliance review sign them off.
 - **Retainer fees** — hidden behind `showPricing: false` in `retainers.ts`, since Bar Council rules
   constrain how legal fees may be advertised.
-- **Cover images** — insight covers are generated geometric artwork (deterministic per slug) rather
+- **Cover images** — blog covers are generated geometric artwork (deterministic per slug) rather
   than stock photography, per the brief's instruction to avoid generic legal imagery. Upload a real
   image in the Studio to override it.
+- **Client Login** — removed. It was a placeholder for a portal that does not exist yet; re-add a
+  route and a `cta.login` entry in `site.ts` when there is something real to link to.

@@ -1,24 +1,24 @@
 /**
- * React bindings for the insights repository.
+ * React bindings for the blog post repository.
  * Components never talk to the store directly — they use these hooks, so
  * swapping the backend stays invisible to the UI.
  */
 
 import * as React from "react";
-import { insightRepository, subscribe } from "./blogStore";
-import type { Insight } from "./types";
+import { postRepository, subscribe } from "./blogStore";
+import type { BlogPost } from "./types";
 
 type Query = { includeUnpublished?: boolean };
 
-export function useInsights({ includeUnpublished = false }: Query = {}) {
-  const [insights, setInsights] = React.useState<Insight[]>([]);
+export function useBlogPosts({ includeUnpublished = false }: Query = {}) {
+  const [posts, setPosts] = React.useState<BlogPost[]>([]);
   const [loading, setLoading] = React.useState(true);
 
   const load = React.useCallback(async () => {
     const data = includeUnpublished
-      ? await insightRepository.listAll()
-      : await insightRepository.listPublished();
-    setInsights(data);
+      ? await postRepository.listAll()
+      : await postRepository.listPublished();
+    setPosts(data);
     setLoading(false);
   }, [includeUnpublished]);
 
@@ -30,24 +30,24 @@ export function useInsights({ includeUnpublished = false }: Query = {}) {
     };
   }, [load]);
 
-  return { insights, loading, reload: load };
+  return { posts, loading, reload: load };
 }
 
-export function useInsight(slug: string | undefined) {
-  const [insight, setInsight] = React.useState<Insight | null>(null);
+export function useBlogPost(slug: string | undefined) {
+  const [post, setPost] = React.useState<BlogPost | null>(null);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     let active = true;
     if (!slug) {
-      setInsight(null);
+      setPost(null);
       setLoading(false);
       return;
     }
     setLoading(true);
-    void insightRepository.findBySlug(slug).then((result) => {
+    void postRepository.findBySlug(slug).then((result) => {
       if (!active) return;
-      setInsight(result);
+      setPost(result);
       setLoading(false);
     });
     return () => {
@@ -55,23 +55,23 @@ export function useInsight(slug: string | undefined) {
     };
   }, [slug]);
 
-  return { insight, loading };
+  return { post, loading };
 }
 
-export function useInsightById(id: string | undefined) {
-  const [insight, setInsight] = React.useState<Insight | null>(null);
+export function useBlogPostById(id: string | undefined) {
+  const [post, setPost] = React.useState<BlogPost | null>(null);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     let active = true;
     if (!id) {
-      setInsight(null);
+      setPost(null);
       setLoading(false);
       return;
     }
-    void insightRepository.findById(id).then((result) => {
+    void postRepository.findById(id).then((result) => {
       if (!active) return;
-      setInsight(result);
+      setPost(result);
       setLoading(false);
     });
     return () => {
@@ -79,20 +79,20 @@ export function useInsightById(id: string | undefined) {
     };
   }, [id]);
 
-  return { insight, loading };
+  return { post, loading };
 }
 
 /**
- * Client-side search and filtering for the /insights listing.
+ * Client-side search and filtering for the /blog listing.
  * Search covers title, excerpt, tags and body so a reader can find a post by a
  * phrase they half-remember from it.
  */
-export function filterInsights(
-  insights: Insight[],
+export function filterPosts(
+  posts: BlogPost[],
   { query, category, industry }: { query: string; category: string; industry: string },
 ) {
   const needle = query.trim().toLowerCase();
-  return insights.filter((post) => {
+  return posts.filter((post) => {
     if (category !== "all" && post.category !== category) return false;
     if (industry !== "all" && post.industry !== industry) return false;
     if (!needle) return true;

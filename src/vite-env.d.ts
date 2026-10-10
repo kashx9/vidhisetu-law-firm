@@ -1,10 +1,10 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  /** "http" switches the insights store to the API backend. Default: local. */
-  readonly VITE_INSIGHTS_BACKEND?: string;
-  /** Base URL of the insights API when VITE_INSIGHTS_BACKEND=http. */
-  readonly VITE_INSIGHTS_API?: string;
+  /** "http" switches the blog store to the API backend. Default: local. */
+  readonly VITE_BLOG_BACKEND?: string;
+  /** Base URL of the blog API when VITE_BLOG_BACKEND=http. */
+  readonly VITE_BLOG_API?: string;
 }
 
 interface ImportMeta {

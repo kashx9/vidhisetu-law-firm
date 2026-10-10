@@ -105,11 +105,6 @@ export function Footer() {
                 </Link>
               </li>
             ))}
-            <li>
-              <Link to={site.cta.login.href} className="transition-colors hover:text-accent">
-                {site.cta.login.label}
-              </Link>
-            </li>
           </ul>
         </div>
       </Container>

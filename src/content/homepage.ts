@@ -4,7 +4,7 @@
  * follows the blueprint in the brief:
  *
  * Header → Hero → Trust Strip → What We Do → Why VidhiSetu → Industry Expertise
- * → Startup Legal Journey → Legal Retainer → Our Approach → Insights
+ * → Startup Legal Journey → Legal Retainer → Our Approach → Blog
  * → Consultation CTA → Footer
  */
 
@@ -73,12 +73,12 @@ export const sections = {
       "The same five steps on every matter, whether it is a single contract review or a multi-year advisory relationship.",
     cta: { label: "Read Our Approach", href: "/approach" },
   },
-  insights: {
-    eyebrow: "Insights",
+  blog: {
+    eyebrow: "From the Blog",
     headline: "Legal Insights for Better Business Decisions.",
     supporting:
       "Practical commentary on the legal questions our clients ask most often, written for business decision-makers rather than lawyers.",
-    cta: { label: "View All Insights", href: "/insights" },
+    cta: { label: "View All Posts", href: "/blog" },
   },
   consultation: {
     eyebrow: "Book a Consultation",

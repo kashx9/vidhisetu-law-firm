@@ -1,39 +1,39 @@
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { CoverArt } from "@/components/common/CoverArt";
-import { categoryLabel } from "@/content/insights/categories";
-import { getAuthor } from "@/content/insights/authors";
+import { categoryLabel } from "@/content/blog/categories";
+import { getAuthor } from "@/content/blog/authors";
 import { formatDate, readingTime } from "@/lib/utils";
-import type { Insight } from "@/features/blog/types";
+import type { BlogPost } from "@/features/blog/types";
 
 /** Standard article card, used on the homepage, the listing and related rails. */
-export function InsightCard({
-  insight,
+export function BlogCard({
+  post,
   variant = "default",
 }: {
-  insight: Insight;
+  post: BlogPost;
   variant?: "default" | "lead";
 }) {
-  const author = getAuthor(insight.authorId);
+  const author = getAuthor(post.authorId);
   const isLead = variant === "lead";
 
   return (
     <article className="group h-full">
-      <Link to={`/insights/${insight.slug}`} className="flex h-full flex-col">
+      <Link to={`/blog/${post.slug}`} className="flex h-full flex-col">
         <CoverArt
-          seed={insight.slug}
-          label={insight.cover?.caption}
-          image={insight.cover?.image}
-          alt={insight.cover?.alt}
+          seed={post.slug}
+          label={post.cover?.caption}
+          image={post.cover?.image}
+          alt={post.cover?.alt}
           aspect={isLead ? "aspect-[16/9]" : "aspect-[16/10]"}
           className="border border-border"
         />
 
         <div className="flex flex-1 flex-col pt-6">
           <div className="flex flex-wrap items-center gap-3">
-            <Badge variant="accent">{categoryLabel(insight.category)}</Badge>
+            <Badge variant="accent">{categoryLabel(post.category)}</Badge>
             <span className="text-xs text-muted-foreground">
-              {formatDate(insight.publishedAt)} · {readingTime(insight.body)} min read
+              {formatDate(post.publishedAt)} · {readingTime(post.body)} min read
             </span>
           </div>
 
@@ -44,11 +44,11 @@ export function InsightCard({
                 : "mt-4 font-display text-xl leading-snug text-primary transition-colors group-hover:text-accent"
             }
           >
-            {insight.title}
+            {post.title}
           </h3>
 
           <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">
-            {insight.excerpt}
+            {post.excerpt}
           </p>
 
           {author ? (

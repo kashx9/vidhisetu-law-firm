@@ -48,9 +48,6 @@ export const site = {
     { label: "X", href: "https://x.com/vidhisetu", icon: "twitter" },
   ],
 
-  /** Where the secondary "Client Login" link points. Replace with the real portal. */
-  clientPortalUrl: "/client-login",
-
   /**
    * Calls to action. Labels are used verbatim across the site, so renaming
    * "Book a Consultation" here renames it in the header, hero, footer,
@@ -59,7 +56,6 @@ export const site = {
   cta: {
     primary: { label: "Book a Consultation", href: "/contact" },
     secondary: { label: "Explore Practice Areas", href: "/practice-areas" },
-    login: { label: "Client Login", href: "/client-login" },
   },
 
   /**

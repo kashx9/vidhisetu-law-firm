@@ -71,7 +71,7 @@ export const thankYou = {
   body: "We have routed your enquiry to the practice group that handles this area. You can expect a response within one business day, and sooner where the matter is time-sensitive.",
   meanwhile: [
     { label: "Read our approach to legal problems", href: "/approach" },
-    { label: "Browse recent legal insights", href: "/insights" },
+    { label: "Read the latest posts on our blog", href: "/blog" },
     { label: "Understand our retainer model", href: "/legal-retainers" },
   ],
 };

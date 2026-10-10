@@ -40,7 +40,7 @@
     @apply h-px w-full bg-border;
   }
 
-  /* Editorial body copy inside long-form pages (insights, legal pages). */
+  /* Editorial body copy inside long-form pages (blog posts, legal pages). */
   .prose-legal {
     @apply text-[1.0625rem] leading-[1.75] text-foreground/80;
   }
