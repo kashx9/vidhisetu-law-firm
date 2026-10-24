@@ -65,8 +65,27 @@ hairline rules. It follows the brief's direction — premium, trust-led, no gave
 imagery, no SaaS-style rounded cards, no gradients. Replace it wholesale when the real design system
 arrives.
 
-The header is a **type-only wordmark** (`src/components/common/Logo.tsx`) — no symbol. If a logo
-asset arrives, render it there.
+### The logo
+
+`src/components/common/Logo.tsx` renders the brand lockup: the V mark, then the firm name in
+letterspaced caps.
+
+| File in `public/` | Used for |
+| --- | --- |
+| `logo-mark.png` | The V + swoosh in the header. Cropped from the supplied artwork. |
+| `favicon.png` | Square version of the mark, for the browser tab. |
+| `Vidhi setu_*.png` | The original supplied artwork. Nothing references it — keep it as the source file, or delete it so it stops shipping to `dist/`. |
+
+Two deliberate decisions, both reversible in that one component:
+
+- **The name beside the mark is live text, not part of the image.** The artwork's own wordmark is
+  `#d9d1d1`, about 1.4:1 against the ivory background — unreadable, and invisible to screen
+  readers. As text it takes the brand ink colour, stays sharp at any size and is selectable. The
+  spelling comes from `site.wordmark` ("Vidhi Setu", spaced to match the artwork), separate from
+  `site.name` ("VidhiSetu") which is used in prose and page titles.
+- **The footer omits the mark.** Its swoosh is black and would vanish into the navy. The wordmark
+  alone carries the brand there. To show the mark on dark as well, export a light variant of the
+  artwork and render it in the `onDark` branch.
 
 ---
 

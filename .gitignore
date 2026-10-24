@@ -9,3 +9,4 @@ dist-ssr
 *.log
 dist-smoke
 tsconfig.tsbuildinfo
+dist-logo

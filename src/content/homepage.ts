@@ -12,10 +12,10 @@ export const hero = {
   eyebrow: "Legal Advisory & Representation",
   headline: "Legal Counsel for Businesses That Are Built to Last.",
   supporting:
-    "Strategic legal advisory for businesses, startups and institutions across contracts, compliance, transactions, intellectual property and disputes.",
+    "Strategic legal and business advisory for startups, MSMEs, enterprises and institutions, spanning corporate structuring, contracts, regulatory compliance, intellectual property, due diligence, litigation support and dispute resolution building legally sound, compliant and investment-ready businesses",
   /** Quiet credibility markers under the hero CTAs. Keep these factual. */
   markers: [
-    { value: "12+", label: "Years of combined practice" },
+    { value: "35+", label: "Years of combined practice" },
     { value: "300+", label: "Businesses advised" },
     { value: "9", label: "Industries served" },
   ],
@@ -36,7 +36,7 @@ export const sections = {
     eyebrow: "What We Do",
     headline: "Legal Advice That Moves With Your Business.",
     supporting:
-      "Eight practice areas, one standard of advice: commercially aware, plainly explained and built to be acted on.",
+      "Strategic legal and business advisory for startups, MSMEs, enterprises and institutions, spanning corporate structuring, contracts, regulatory compliance, intellectual property, due diligence, litigation support and dispute resolution—building legally sound, compliant and investment-ready businesses.",
     cta: { label: "View All Practice Areas", href: "/practice-areas" },
   },
   whyUs: {
@@ -60,10 +60,10 @@ export const sections = {
     cta: { label: "Explore Startup Legal Services", href: "/startup-legal" },
   },
   retainer: {
-    eyebrow: "Legal Retainers",
-    headline: "Your Business Doesn't Need a Lawyer Only When Something Goes Wrong.",
+    eyebrow: "Legal Retainers Services",
+    headline: "Continuous Legal Support. Proactive Risk Management.",
     supporting:
-      "A retainer makes legal advice continuous rather than reactive — an ongoing legal partnership for businesses that want proactive risk management and predictable cost.",
+      "Our legal retainer services provide businesses with ongoing access to legal expertise, timely advisory and proactive compliance support. Through a structured, long-term engagement, we help identify potential risks, address legal requirements and manage legal costs with greater predictability enabling businesses to operate with confidence and focus on growth.",
     cta: { label: "Explore Legal Retainers", href: "/legal-retainers" },
   },
   approach: {

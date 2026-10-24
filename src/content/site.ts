@@ -5,10 +5,17 @@
  */
 
 export const site = {
+  /** Used in prose, page titles and sentences: "VidhiSetu advises founders…". */
   name: "VidhiSetu",
+  /**
+   * The name as it is set in the logo lockup — spaced, so it renders as
+   * "V I D H I  S E T U" in letterspaced caps beside the mark. Kept separate
+   * from `name` because the logo spells it as two words and prose does not.
+   */
+  wordmark: "Vidhi Setu",
   legalName: "VidhiSetu Legal LLP",
-  /** Rendered next to the wordmark in the header. */
-  descriptor: "Law Firm & Legal Consultancy",
+  /** Rendered under the wordmark in the header and footer. */
+  descriptor: "Law Firm",
   tagline: "Legal Counsel for Businesses That Are Built to Last",
   positioning:
     "Strategic legal advisory for businesses, startups and institutions across contracts, compliance, transactions, intellectual property and disputes.",
@@ -17,11 +24,11 @@ export const site = {
     "A business-minded legal partner for companies that want their legal foundation built right the first time — and kept right as they grow.",
 
   contact: {
-    email: "counsel@vidhisetu.in",
+    email: "vidhisetuconnects@gmail.com",
     /** Used for mailto: and tel: links, and for click-to-call on mobile. */
-    phone: "+91 98765 43210",
-    phoneHref: "+919876543210",
-    whatsapp: "+919876543210",
+    phone: "+91 9315375877",
+    phoneHref: "+919315375877",
+    whatsapp: "+919315375877",
     officeHours: "Monday to Friday, 10:00 – 19:00 IST",
     responsePromise: "We respond to consultation requests within one business day.",
   },
@@ -31,16 +38,11 @@ export const site = {
       label: "Principal Office",
       city: "Ahmedabad",
       lines: [
-        "4th Floor, Shivalik Corporate Park",
-        "Prahlad Nagar, Ahmedabad 380015",
-        "Gujarat, India",
+        "400-A, 4th Floor",
+        "12 Ajit Singh House, Yusuf Sarai",
+        "Green Park, New Delhi - 110016",
       ],
-    },
-    {
-      label: "Correspondent Office",
-      city: "Mumbai",
-      lines: ["Unit 12, Marathon Futurex", "Lower Parel, Mumbai 400013", "Maharashtra, India"],
-    },
+    }
   ],
 
   social: [
