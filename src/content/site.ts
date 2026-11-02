@@ -42,7 +42,7 @@ export const site = {
         "12 Ajit Singh House, Yusuf Sarai",
         "Green Park, New Delhi - 110016",
       ],
-    }
+    },
   ],
 
   social: [

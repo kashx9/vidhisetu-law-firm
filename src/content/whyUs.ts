@@ -43,3 +43,13 @@ export const differentiators: Differentiator[] = [
     body: "Technology improves legal workflows — tracking, turnaround and visibility — while professional legal advice remains central. The tooling serves the counsel; it does not replace it.",
   },
 ];
+
+/** The outcomes clients engage us for. Listed under the differentiators. */
+export const outcomes: string[] = [
+  "Prevention Before Litigation",
+  "Stronger Governance",
+  "Faster Business Decisions",
+  "Investor Readiness",
+  "Contract Excellence",
+  "Compliance Confidence",
+];

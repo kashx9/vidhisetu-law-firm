@@ -28,7 +28,7 @@ export default function StartupLegalPage() {
         crumbs={[{ label: "Home", href: "/" }, { label: "Startup Legal Services" }]}
       >
         <Button asChild variant="accent" size="lg">
-          <Link to="/contact?topic=startup-investment">
+          <Link to="/contact?topic=startup-legal-advisory">
             {site.cta.primary.label}
             <ArrowRight aria-hidden />
           </Link>

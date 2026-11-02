@@ -79,8 +79,20 @@ export function Header() {
                 </Link>
 
                 {openMenu === item.label ? (
-                  <div className="absolute left-1/2 top-full z-50 w-[22rem] -translate-x-1/2 pt-2">
-                    <div className="animate-fade-up border border-border bg-card p-2 shadow-lg">
+                  // Past nine entries a single column runs taller than a short
+                  // laptop viewport, so the panel splits into two.
+                  <div
+                    className={cn(
+                      "absolute left-1/2 top-full z-50 -translate-x-1/2 pt-2",
+                      item.children.length > 9 ? "w-[42rem]" : "w-[22rem]",
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "animate-fade-up border border-border bg-card p-2 shadow-lg",
+                        item.children.length > 9 && "grid grid-cols-2 gap-x-2",
+                      )}
+                    >
                       {item.children.map((child) => (
                         <Link
                           key={child.href}

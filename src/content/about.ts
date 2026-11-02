@@ -58,7 +58,7 @@ export const team: TeamMember[] = [
   {
     name: "Adv. Meera Raghunathan",
     role: "Founder & Managing Partner",
-    focus: ["corporate-commercial", "startup-investment", "legal-due-diligence"],
+    focus: ["corporate-advisory", "startup-legal-advisory", "due-diligence"],
     bio: "Advises founders and boards on structuring, investment and governance. Leads the firm's transaction and diligence practice, and has closed rounds across seed to Series B for technology and consumer businesses.",
     initials: "MR",
     barEnrolment: "Bar Council of Gujarat",
@@ -66,7 +66,7 @@ export const team: TeamMember[] = [
   {
     name: "Adv. Kabir Anand",
     role: "Partner — Disputes",
-    focus: ["litigation-arbitration", "contracts"],
+    focus: ["litigation-support", "arbitration-mediation"],
     bio: "Handles commercial disputes, arbitration and recovery. Known for assessing matters commercially before filing, and for settling more of them than he litigates.",
     initials: "KA",
     barEnrolment: "Bar Council of Maharashtra & Goa",
@@ -74,7 +74,7 @@ export const team: TeamMember[] = [
   {
     name: "Adv. Sanya Deshpande",
     role: "Partner — Regulatory & IP",
-    focus: ["compliance-regulatory", "intellectual-property"],
+    focus: ["compliance-governance", "intellectual-property", "trademark"],
     bio: "Builds compliance frameworks for regulated sectors and manages trademark portfolios and enforcement. Advises healthcare, education and F&B clients on licensing across states.",
     initials: "SD",
     barEnrolment: "Bar Council of Gujarat",
@@ -82,7 +82,7 @@ export const team: TeamMember[] = [
   {
     name: "Adv. Rohan Mehta",
     role: "Principal Associate — Employment",
-    focus: ["employment-labour", "contracts"],
+    focus: ["employment-documentation", "commercial-contracts"],
     bio: "Advises on employment documentation, workplace policy and separations. Leads the firm's POSH advisory and training practice.",
     initials: "RM",
     barEnrolment: "Bar Council of Gujarat",

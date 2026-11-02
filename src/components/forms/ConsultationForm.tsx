@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -63,7 +63,16 @@ async function submitEnquiry(values: ConsultationValues) {
 
 export function ConsultationForm({ tone = "light" }: { tone?: "light" | "dark" }) {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const onDark = tone === "dark";
+
+  // Practice area and industry pages link here as /contact?topic=<slug>, so the
+  // enquiry arrives with the right area already chosen. An unrecognised slug is
+  // ignored rather than selected, which keeps the field's validation honest.
+  const presetTopic = params.get("topic") ?? "";
+  const defaultTopic = enquiryTopics.some((topic) => topic.value === presetTopic)
+    ? presetTopic
+    : "";
 
   const {
     register,
@@ -78,7 +87,7 @@ export function ConsultationForm({ tone = "light" }: { tone?: "light" | "dark" }
       organisation: "",
       email: "",
       phone: "",
-      topic: "",
+      topic: defaultTopic,
       description: "",
       mode: "",
     },

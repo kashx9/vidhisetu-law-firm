@@ -7,7 +7,9 @@
  */
 
 import {
+  BadgeCheck,
   Building2,
+  Car,
   Clock,
   ClipboardCheck,
   Compass,
@@ -19,21 +21,26 @@ import {
   Hotel,
   Landmark,
   Linkedin,
+  Network,
   Rocket,
   Scale,
   Search,
   Shield,
   ShieldCheck,
   ShoppingCart,
+  Store,
   Target,
   Twitter,
   Users,
   Utensils,
+  Workflow,
   type LucideIcon,
 } from "lucide-react";
 
 export const icons = {
+  badgeCheck: BadgeCheck,
   building: Building2,
+  car: Car,
   clipboardCheck: ClipboardCheck,
   clock: Clock,
   compass: Compass,
@@ -45,16 +52,19 @@ export const icons = {
   hotel: Hotel,
   landmark: Landmark,
   linkedin: Linkedin,
+  network: Network,
   rocket: Rocket,
   scale: Scale,
   search: Search,
   shield: Shield,
   shieldCheck: ShieldCheck,
   shoppingCart: ShoppingCart,
+  store: Store,
   target: Target,
   twitter: Twitter,
   users: Users,
   utensils: Utensils,
+  workflow: Workflow,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof icons;

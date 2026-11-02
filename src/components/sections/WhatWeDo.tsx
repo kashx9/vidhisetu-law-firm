@@ -34,7 +34,7 @@ export function WhatWeDo() {
                   {area.title}
                 </h3>
                 <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">
-                  {area.summary}
+                  {area.headline}
                 </p>
                 <span className="mt-6 inline-flex items-center gap-1.5 text-[0.75rem] uppercase tracking-eyebrow text-accent">
                   Read more

@@ -23,12 +23,12 @@ export const hero = {
 
 /** Section 03 — the practice strip directly beneath the hero. */
 export const trustStrip = [
-  "Corporate & Commercial",
-  "Startups & Emerging Businesses",
+  "Corporate Advisory",
+  "Commercial Contracts",
+  "Startup Legal Advisory",
   "Intellectual Property",
-  "Compliance & Regulatory",
-  "Disputes & Litigation",
-  "Legal Due Diligence",
+  "Compliance & Governance",
+  "Due Diligence",
 ] as const;
 
 export const sections = {

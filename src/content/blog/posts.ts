@@ -19,7 +19,7 @@ export const seedPosts: BlogPost[] = [
     excerpt:
       "Valuation is the number everyone negotiates. These five clauses decide what that number is actually worth at exit.",
     category: "startup-law",
-    practiceArea: "startup-investment",
+    practiceArea: "startup-legal-advisory",
     industry: "startups",
     tags: ["term sheet", "fundraising", "cap table", "liquidation preference"],
     authorId: "meera-raghunathan",
@@ -68,7 +68,7 @@ Read the term sheet as a description of what happens when things go badly, becau
       "One of the most common findings in Indian startup due diligence, and one of the easiest to fix before it becomes expensive.",
     category: "intellectual-property",
     practiceArea: "intellectual-property",
-    industry: "saas-technology",
+    industry: "startups",
     tags: ["IP assignment", "contractors", "due diligence", "copyright"],
     authorId: "sanya-deshpande",
     publishedAt: "2026-08-04",
@@ -112,7 +112,7 @@ The pattern repeats with logo designers, agencies that hold your domain registra
     excerpt:
       "Compliance programmes fail when they start with policy documents. Start with knowing what data you hold.",
     category: "compliance",
-    practiceArea: "compliance-regulatory",
+    practiceArea: "compliance-governance",
     tags: ["DPDP", "data protection", "privacy", "consent"],
     authorId: "sanya-deshpande",
     publishedAt: "2026-07-22",
@@ -164,8 +164,8 @@ Do not spend the first month drafting a beautiful policy suite. Do not buy tooli
     excerpt:
       "Enterprise customers will push for uncapped liability. Here is where the line usually sits, and why.",
     category: "contracts",
-    practiceArea: "contracts",
-    industry: "saas-technology",
+    practiceArea: "commercial-contracts",
+    industry: "corporates",
     tags: ["MSA", "liability", "negotiation", "indemnity"],
     authorId: "meera-raghunathan",
     publishedAt: "2026-07-09",
@@ -211,7 +211,7 @@ Check the indemnity clause before congratulating yourself on the cap. An indemni
     excerpt:
       "Having a policy is the smallest part of the obligation. The Internal Committee is where most organisations fall short.",
     category: "employment",
-    practiceArea: "employment-labour",
+    practiceArea: "employment-documentation",
     tags: ["POSH", "internal committee", "workplace policy", "annual return"],
     authorId: "rohan-mehta",
     publishedAt: "2026-06-27",
@@ -264,7 +264,7 @@ Audit the committee before you revise the policy. If the committee is not proper
     excerpt:
       "Arbitration is faster and more private. It is also more expensive per rupee in dispute, which matters more than most parties expect.",
     category: "disputes-litigation",
-    practiceArea: "litigation-arbitration",
+    practiceArea: "arbitration-mediation",
     tags: ["arbitration", "dispute resolution", "drafting", "enforcement"],
     authorId: "kabir-anand",
     publishedAt: "2026-06-11",
@@ -311,7 +311,7 @@ Assess the matter commercially first. What is realistically recoverable, from a 
     excerpt:
       "The document is easy to write while everyone agrees. It becomes impossible to write at the exact moment it is needed.",
     category: "startup-law",
-    practiceArea: "startup-investment",
+    practiceArea: "startup-legal-advisory",
     industry: "startups",
     tags: ["founders agreement", "vesting", "equity", "co-founder"],
     authorId: "meera-raghunathan",
@@ -353,8 +353,8 @@ It is still worth doing. Retrofitting vesting onto existing shares is more compl
     excerpt:
       "Minutes are the only contemporaneous record of what a board decided and why. Their quality is tested only under pressure.",
     category: "corporate-law",
-    practiceArea: "corporate-commercial",
-    industry: "msmes-corporates",
+    practiceArea: "corporate-advisory",
+    industry: "corporates",
     tags: ["governance", "board", "minutes", "records"],
     authorId: "meera-raghunathan",
     publishedAt: "2026-05-14",
@@ -393,8 +393,8 @@ That standard costs an hour a quarter, and it is the difference between a two-we
     excerpt:
       "An unfinished draft, included so the Blog Studio has something to show in the non-published states.",
     category: "compliance",
-    practiceArea: "compliance-regulatory",
-    industry: "saas-technology",
+    practiceArea: "compliance-governance",
+    industry: "corporates",
     tags: ["GST", "cross-border", "SaaS", "OIDAR"],
     authorId: "sanya-deshpande",
     publishedAt: "2026-09-02",

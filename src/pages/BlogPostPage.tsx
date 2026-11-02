@@ -131,11 +131,9 @@ export default function BlogPostPage() {
               {practiceArea ? (
                 <div className="border border-border bg-card p-6">
                   <p className="eyebrow text-accent">Related Practice</p>
-                  <h2 className="mt-4 font-display text-lg text-primary">
-                    {practiceArea.headline}
-                  </h2>
+                  <h2 className="mt-4 font-display text-lg text-primary">{practiceArea.title}</h2>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                    {practiceArea.summary}
+                    {practiceArea.headline}
                   </p>
                   <Button asChild variant="outline" size="sm" className="mt-5 w-full">
                     <Link to={`/practice-areas/${practiceArea.slug}`}>View practice area</Link>

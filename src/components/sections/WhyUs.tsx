@@ -1,6 +1,6 @@
 import { Section, SectionHeading } from "@/components/common/Section";
 import { Reveal } from "@/components/common/Reveal";
-import { differentiators } from "@/content/whyUs";
+import { differentiators, outcomes } from "@/content/whyUs";
 import { sections } from "@/content/homepage";
 import { getIcon } from "@/lib/icons";
 
@@ -32,6 +32,20 @@ export function WhyUs() {
             </Reveal>
           );
         })}
+      </div>
+
+      <div className="mt-20 border-t border-primary-foreground/20 pt-10">
+        <p className="eyebrow text-accent">What Clients Gain</p>
+        <ul className="mt-6 flex flex-wrap gap-x-10 gap-y-4">
+          {outcomes.map((outcome) => (
+            <li
+              key={outcome}
+              className="font-display text-lg text-primary-foreground/85 md:text-xl"
+            >
+              {outcome}
+            </li>
+          ))}
+        </ul>
       </div>
     </Section>
   );

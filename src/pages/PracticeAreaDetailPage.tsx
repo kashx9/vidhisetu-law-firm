@@ -25,19 +25,19 @@ export default function PracticeAreaDetailPage() {
   const { posts } = useBlogPosts();
 
   usePageMeta({
-    title: area ? `${area.headline} — ${site.name}` : site.name,
-    description: area?.summary,
+    title: area ? `${area.title} — ${site.name}` : site.name,
+    description: area?.intro,
   });
 
   if (!area) return <Navigate to="/practice-areas" replace />;
 
   const related = posts.filter((post) => post.practiceArea === area.slug).slice(0, 3);
-  const others = practiceAreas.filter((item) => item.slug !== area.slug).slice(0, 4);
+  const others = practiceAreas.filter((item) => item.slug !== area.slug);
 
   return (
     <>
       <PageHero
-        eyebrow="Practice Area"
+        eyebrow={area.titleLong ?? area.title}
         title={area.headline}
         lead={area.intro}
         crumbs={[
@@ -55,49 +55,27 @@ export default function PracticeAreaDetailPage() {
       </PageHero>
 
       <Section>
-        <div className="grid gap-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
-          <div>
-            <SectionHeading eyebrow="Scope" headline="What This Covers." />
-            <ul className="mt-8 space-y-4">
-              {area.services.map((service) => (
-                <li key={service} className="flex items-start gap-3 border-b border-border pb-4">
-                  <Check aria-hidden className="mt-1 h-4 w-4 shrink-0 text-accent" />
-                  <span className="text-[0.9375rem] leading-relaxed text-foreground/85">
-                    {service}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
+        <SectionHeading eyebrow="Scope" headline="Our services include" />
 
-          <div className="lg:pt-2">
-            <div className="border border-border bg-card p-8">
-              <h3 className="eyebrow text-accent">Typical Situations</h3>
-              <ul className="mt-6 space-y-4">
-                {area.situations.map((situation) => (
-                  <li key={situation} className="text-sm leading-relaxed text-muted-foreground">
-                    “{situation}”
-                  </li>
-                ))}
-              </ul>
-            </div>
+        <ul className="mt-10 grid gap-x-12 md:grid-cols-2">
+          {area.services.map((service, index) => (
+            <Reveal
+              as="li"
+              key={service}
+              delay={index * 25}
+              className="flex items-start gap-3 border-b border-border py-4"
+            >
+              <Check aria-hidden className="mt-1 h-4 w-4 shrink-0 text-accent" />
+              <span className="text-[0.9375rem] leading-relaxed text-foreground/85">{service}</span>
+            </Reveal>
+          ))}
+        </ul>
 
-            <div className="mt-8 border border-border bg-secondary/40 p-8">
-              <h3 className="eyebrow text-accent">What You Receive</h3>
-              <ul className="mt-6 space-y-3">
-                {area.deliverables.map((deliverable) => (
-                  <li
-                    key={deliverable}
-                    className="flex gap-3 text-sm leading-relaxed text-foreground/80"
-                  >
-                    <span aria-hidden className="mt-2 h-px w-4 shrink-0 bg-accent" />
-                    {deliverable}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
+        {area.note ? (
+          <p className="mt-10 max-w-3xl border-l-2 border-accent bg-secondary/40 p-6 text-sm leading-relaxed text-muted-foreground">
+            {area.note}
+          </p>
+        ) : null}
       </Section>
 
       <Section tone="sand">
@@ -145,7 +123,7 @@ export default function PracticeAreaDetailPage() {
         </Section>
       ) : null}
 
-      {area.faqs.length ? (
+      {area.faqs?.length ? (
         <Section tone="sand">
           <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
             <SectionHeading eyebrow="Questions" headline="What Clients Ask Us." />

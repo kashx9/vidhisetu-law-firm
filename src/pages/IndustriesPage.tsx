@@ -8,7 +8,7 @@ export default function IndustriesPage() {
   usePageMeta({
     title: `Industries — ${site.name}`,
     description:
-      "Legal counsel for startups, MSMEs, education, F&B, SaaS, e-commerce, healthcare, real estate and hospitality.",
+      "Legal counsel for startups, MSMEs, established corporates, educational institutions, F&B businesses and the automotive sector.",
   });
 
   return (

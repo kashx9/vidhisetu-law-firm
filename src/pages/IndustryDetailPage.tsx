@@ -26,12 +26,15 @@ export default function IndustryDetailPage() {
 
   const related = posts.filter((post) => post.industry === industry.slug).slice(0, 3);
   const others = industries.filter((item) => item.slug !== industry.slug);
+  // The legal team gave some sectors a longer formal designation than fits in
+  // the nav or on a card. The detail page is where it is used in full.
+  const fullTitle = industry.titleLong ?? industry.title;
 
   return (
     <>
       <PageHero
         eyebrow="Industry"
-        title={industry.title}
+        title={fullTitle}
         lead={industry.intro}
         crumbs={[
           { label: "Home", href: "/" },
@@ -83,33 +86,42 @@ export default function IndustryDetailPage() {
       </Section>
 
       <Section tone="sand">
-        <SectionHeading
-          eyebrow="Relevant Services"
-          headline={`How We Support ${industry.title}.`}
-        />
+        <SectionHeading eyebrow="Relevant Services" headline={`How We Support ${fullTitle}.`} />
         <div className="mt-12 grid gap-px bg-border sm:grid-cols-2">
-          {industry.relevantPracticeAreas.map((areaSlug, index) => {
-            const area = getPracticeArea(areaSlug);
-            if (!area) return null;
-            const Icon = getIcon(area.icon);
-            return (
-              <Reveal key={areaSlug} delay={index * 40}>
-                <Link
-                  to={`/practice-areas/${areaSlug}`}
-                  className="group flex h-full flex-col bg-background p-8 transition-colors hover:bg-card"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <Icon aria-hidden className="h-6 w-6 text-accent" strokeWidth={1.25} />
+          {industry.services.map((service, index) => {
+            // Several service names here span two practice areas, so a card
+            // links out only where the legal team's naming maps cleanly to one.
+            const area = service.slug ? getPracticeArea(service.slug) : undefined;
+            const Icon = getIcon(area?.icon ?? "scale");
+            const body = (
+              <>
+                <div className="flex items-start justify-between gap-4">
+                  <Icon aria-hidden className="h-6 w-6 text-accent" strokeWidth={1.25} />
+                  {area ? (
                     <ArrowUpRight
                       aria-hidden
                       className="h-4 w-4 text-muted-foreground/40 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent"
                     />
-                  </div>
-                  <h3 className="mt-6 font-display text-xl text-primary">{area.headline}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    {area.summary}
-                  </p>
-                </Link>
+                  ) : null}
+                </div>
+                <h3 className="mt-6 font-display text-xl text-primary">{service.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                  {service.description}
+                </p>
+              </>
+            );
+            return (
+              <Reveal key={service.title} delay={index * 40}>
+                {area ? (
+                  <Link
+                    to={`/practice-areas/${area.slug}`}
+                    className="group flex h-full flex-col bg-background p-8 transition-colors hover:bg-card"
+                  >
+                    {body}
+                  </Link>
+                ) : (
+                  <div className="flex h-full flex-col bg-background p-8">{body}</div>
+                )}
               </Reveal>
             );
           })}

@@ -44,10 +44,10 @@ export default function PracticeAreasPage() {
                     />
                   </div>
                   <h2 className="mt-6 font-display text-2xl leading-snug text-primary">
-                    {area.headline}
+                    {area.title}
                   </h2>
                   <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    {area.summary}
+                    {area.headline}
                   </p>
                   <ul className="mt-6 space-y-1.5 border-t border-border pt-5">
                     {area.services.slice(0, 3).map((service) => (
@@ -70,7 +70,7 @@ export default function PracticeAreasPage() {
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
           <SectionHeading
             eyebrow="Legal Retainers"
-            headline="Or Engage Us Continuously, Across All Eight."
+            headline="Or Engage Us Continuously, Across Every Practice."
             supporting="A retainer gives you access to every practice area under one arrangement, with predictable cost and a team that already knows your business."
             tone="dark"
           />

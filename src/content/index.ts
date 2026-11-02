@@ -9,7 +9,7 @@
  *  navigation.ts       Header menu, footer columns, legal links.
  *  homepage.ts         Hero copy, trust strip, every homepage section headline.
  *  practiceAreas.ts    8 practice areas → grid, dropdown, index and detail pages.
- *  industries.ts       9 industries → grid, dropdown, index and detail pages.
+ *  industries.ts       6 industries → grid, dropdown, index and detail pages.
  *  whyUs.ts            The six differentiators.
  *  approach.ts         The five-step method and the underlying principles.
  *  startupJourney.ts   The nine startup stages.

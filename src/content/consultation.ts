@@ -27,14 +27,18 @@ export const enquiryTopics = [
  * backend or CRM when the integration is ready.
  */
 export const enquiryRouting: Record<string, string> = {
-  "corporate-commercial": "corporate@vidhisetu.in",
-  contracts: "contracts@vidhisetu.in",
-  "startup-investment": "startups@vidhisetu.in",
+  "corporate-advisory": "corporate@vidhisetu.in",
+  "commercial-contracts": "contracts@vidhisetu.in",
+  "startup-legal-advisory": "startups@vidhisetu.in",
+  "due-diligence": "diligence@vidhisetu.in",
+  "compliance-governance": "compliance@vidhisetu.in",
   "intellectual-property": "ip@vidhisetu.in",
-  "compliance-regulatory": "compliance@vidhisetu.in",
-  "employment-labour": "employment@vidhisetu.in",
-  "litigation-arbitration": "disputes@vidhisetu.in",
-  "legal-due-diligence": "diligence@vidhisetu.in",
+  trademark: "ip@vidhisetu.in",
+  "litigation-support": "disputes@vidhisetu.in",
+  "arbitration-mediation": "disputes@vidhisetu.in",
+  "employment-documentation": "employment@vidhisetu.in",
+  "legal-management": "counsel@vidhisetu.in",
+  "business-governance": "corporate@vidhisetu.in",
   "legal-retainer": "retainers@vidhisetu.in",
   other: "counsel@vidhisetu.in",
 };

@@ -28,8 +28,8 @@ details and design tokens live in one folder:
 | `site.ts` | Firm name, phone, email, offices, social, CTA labels, Bar Council disclaimer. |
 | `navigation.ts` | Header menu, dropdowns, footer columns, legal links. |
 | `homepage.ts` | Hero copy, trust strip, every homepage section headline. |
-| `practiceAreas.ts` | The 8 practice areas → homepage grid, dropdown, index page **and detail pages**. |
-| `industries.ts` | The 9 industries → same, with a dedicated page each. |
+| `practiceAreas.ts` | The 12 practice areas → homepage grid, dropdown, index page **and detail pages**. Copy supplied by the legal team. |
+| `industries.ts` | The 6 industries → same, with a dedicated page each. Copy supplied by the legal team. |
 | `whyUs.ts` | The six differentiators. |
 | `approach.ts` | Understand → Assess → Advise → Execute → Support, plus the principles. |
 | `startupJourney.ts` | The nine startup stages. |
