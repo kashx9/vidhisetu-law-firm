@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Container, Eyebrow } from "@/components/common/Section";
 import { hero } from "@/content/homepage";
 import { site } from "@/content/site";
+import { countUp, gsap, lineSweep, revealHeading, useMotion } from "@/lib/motion";
 
 /**
  * Section 02 — Hero.
@@ -11,21 +12,64 @@ import { site } from "@/content/site";
  * asymmetric rule structure on the right. Restrained, no gradient, no gavel.
  */
 export function Hero() {
+  const ref = useMotion<HTMLElement>((scope) => {
+    // The headline leads; everything else follows it in, and the arch draws
+    // itself alongside so the right column is not dead weight on arrival.
+    const cleanup = revealHeading(scope.querySelector("h1"), (lines) =>
+      gsap
+        .timeline({ defaults: { duration: 0.9 } })
+        .from(".eyebrow", { opacity: 0, duration: 0.6 })
+        .from(".eyebrow > span", { scaleX: 0, transformOrigin: "left center" }, 0)
+        .from(lines, lineSweep, 0.1)
+        .from("[data-motion='lead']", { opacity: 0, y: 16 }, 0.5)
+        .from("[data-motion='actions'] > *", { opacity: 0, y: 16, stagger: 0.08 }, 0.65)
+        .from("[data-motion='markers'] > *", { opacity: 0, y: 14, stagger: 0.08 }, 0.8)
+        .from("[data-motion='panel']", { opacity: 0, duration: 1.4 }, 0.2)
+        .from(
+          // Direct children only — the grid pattern inside <defs> is not drawn in.
+          "[data-motion='arch'] > path, [data-motion='arch'] > line",
+          { drawSVG: "0% 0%", duration: 1.8, stagger: 0.12, ease: "power2.inOut" },
+          0.35,
+        )
+        .from("[data-motion='caption']", { opacity: 0, y: 12 }, 1.2),
+    );
+
+    // The markers count up to whatever figure the content file states.
+    gsap.utils
+      .toArray<HTMLElement>("[data-motion='marker-value']")
+      .forEach((el) => countUp(el, scope));
+
+    // A little depth: the arch panel lags the text column as the page scrolls.
+    gsap.to("[data-motion='panel']", {
+      yPercent: -9,
+      ease: "none",
+      scrollTrigger: { trigger: scope, start: "top top", end: "bottom top", scrub: true },
+    });
+
+    return cleanup;
+  });
+
   return (
-    <section className="relative overflow-hidden border-b border-border bg-background">
+    <section
+      ref={ref}
+      className="relative overflow-hidden border-b border-border bg-background"
+    >
       <Container className="relative grid gap-16 py-20 md:py-28 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-20">
-        <div className="animate-fade-up">
+        <div>
           <Eyebrow>{hero.eyebrow}</Eyebrow>
 
           <h1 className="mt-6 max-w-[18ch] font-display text-[2.5rem] leading-[1.08] text-primary md:text-[3.5rem] lg:text-[4rem]">
             {hero.headline}
           </h1>
 
-          <p className="mt-7 max-w-xl text-lg leading-relaxed text-muted-foreground">
+          <p
+            data-motion="lead"
+            className="mt-7 max-w-xl text-lg leading-relaxed text-muted-foreground"
+          >
             {hero.supporting}
           </p>
 
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+          <div data-motion="actions" className="mt-10 flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg">
               <Link to={site.cta.primary.href}>
                 {site.cta.primary.label}
@@ -37,12 +81,20 @@ export function Hero() {
             </Button>
           </div>
 
-          <dl className="mt-14 grid max-w-lg grid-cols-3 gap-6 border-t border-border pt-8">
+          <dl
+            data-motion="markers"
+            className="mt-14 grid max-w-lg grid-cols-3 gap-6 border-t border-border pt-8"
+          >
             {hero.markers.map((marker) => (
               <div key={marker.label}>
                 <dt className="sr-only">{marker.label}</dt>
                 <dd>
-                  <span className="block font-display text-3xl text-primary">{marker.value}</span>
+                  <span
+                    data-motion="marker-value"
+                    className="block font-display text-3xl text-primary"
+                  >
+                    {marker.value}
+                  </span>
                   <span className="mt-2 block text-xs leading-snug text-muted-foreground">
                     {marker.label}
                   </span>
@@ -53,9 +105,9 @@ export function Hero() {
         </div>
 
         {/* Editorial mark — an architectural arch built from hairlines. */}
-        <div className="relative hidden lg:block">
+        <div data-motion="panel" className="relative hidden lg:block">
           <div className="relative aspect-[4/5] w-full border border-border bg-card">
-            <svg viewBox="0 0 400 500" className="h-full w-full" aria-hidden>
+            <svg viewBox="0 0 400 500" className="h-full w-full" aria-hidden data-motion="arch">
               <defs>
                 <pattern id="hero-grid" width="40" height="40" patternUnits="userSpaceOnUse">
                   <path
@@ -95,7 +147,10 @@ export function Hero() {
                 strokeDasharray="4 6"
               />
             </svg>
-            <div className="absolute bottom-8 left-8 right-8 border-t border-border pt-5">
+            <div
+              data-motion="caption"
+              className="absolute bottom-8 left-8 right-8 border-t border-border pt-5"
+            >
               <p className="font-display text-lg italic leading-snug text-primary">
                 “Vidhi” is law. “Setu” is the bridge.
               </p>

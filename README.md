@@ -65,6 +65,31 @@ hairline rules. It follows the brief's direction — premium, trust-led, no gave
 imagery, no SaaS-style rounded cards, no gradients. Replace it wholesale when the real design system
 arrives.
 
+### Motion
+
+All animation goes through [src/lib/motion.ts](src/lib/motion.ts), which registers GSAP with
+ScrollTrigger, SplitText and DrawSVG and exports one hook:
+
+```tsx
+const ref = useMotion<HTMLDivElement>((scope) => {
+  gsap.from("li", { opacity: 0, y: 10, stagger: 0.07, scrollTrigger: { trigger: scope } });
+});
+```
+
+`useMotion` runs the callback inside a `gsap.context()` scoped to the returned ref, so selector
+strings cannot reach another section and every tween and ScrollTrigger is reverted on unmount.
+Two invariants hold everywhere:
+
+- **Nothing is hidden by CSS.** "From" states are set in a layout effect, so the server-rendered
+  HTML and a visitor without JavaScript see the finished page. Animation never gates the content.
+- **`prefers-reduced-motion: reduce` skips setup entirely** — elements keep their resting style.
+
+What is animated: the homepage hero (headline lines, the arch drawing itself, counters on the
+markers, parallax on the panel), the inner-page masthead, every `SectionHeading` headline, the
+practice strip, the approach numerals, and the shared `Reveal` used by every grid on the site.
+Headlines are split into masked lines with `autoSplit`, so a late webfont re-measures rather than
+cropping at the wrong words.
+
 ### The logo
 
 `src/components/common/Logo.tsx` renders the brand lockup: the V mark, then the firm name in

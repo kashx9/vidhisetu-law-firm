@@ -4,12 +4,17 @@ import { Toaster } from "sonner";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { StickyConsultBar } from "./StickyConsultBar";
+import { ScrollTrigger } from "@/lib/motion";
 
 /** Restores the top of the page on navigation, except when returning via history. */
 function ScrollToTop() {
   const { pathname } = useLocation();
   React.useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+    // The new route's triggers were measured against the old scroll position
+    // and the old page height, so re-measure once it has mounted.
+    const frame = requestAnimationFrame(() => ScrollTrigger.refresh());
+    return () => cancelAnimationFrame(frame);
   }, [pathname]);
   return null;
 }

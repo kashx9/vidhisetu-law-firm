@@ -2,6 +2,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { Container, Eyebrow } from "./Section";
+import { gsap, lineSweep, revealHeading, useMotion } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 export type Crumb = { label: string; href?: string };
@@ -25,12 +26,43 @@ export function PageHero({
   children?: React.ReactNode;
   className?: string;
 }) {
+  // Masthead entrance, played on mount rather than on scroll — it is already in
+  // view. The rule grid behind it drifts on scroll for a little depth.
+  const ref = useMotion<HTMLDivElement>(
+    (scope) => {
+      const cleanup = revealHeading(scope.querySelector("h1"), (lines) =>
+        gsap
+          .timeline({ defaults: { duration: 0.9 } })
+          .from("[data-motion='crumbs'] > *", { opacity: 0, y: 8, stagger: 0.04, duration: 0.5 })
+          .from(".eyebrow", { opacity: 0, duration: 0.6 }, 0.1)
+          .from(".eyebrow > span", { scaleX: 0, transformOrigin: "left center" }, 0.1)
+          .from(lines, lineSweep, 0.15)
+          .from("[data-motion='lead']", { opacity: 0, y: 14 }, 0.45)
+          .from("[data-motion='hero-cta']", { opacity: 0, y: 14 }, 0.6),
+      );
+
+      gsap.to("[data-motion='grid']", {
+        yPercent: 18,
+        ease: "none",
+        scrollTrigger: { trigger: scope, start: "top top", end: "bottom top", scrub: true },
+      });
+
+      return cleanup;
+    },
+    [title],
+  );
+
   return (
-    <div className={cn("relative overflow-hidden bg-primary text-primary-foreground", className)}>
+    <div
+      ref={ref}
+      className={cn("relative overflow-hidden bg-primary text-primary-foreground", className)}
+    >
       {/* Faint rule grid — texture without imagery. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.07]"
+        data-motion="grid"
+        // Overscanned top and bottom so the parallax drift never exposes an edge.
+        className="pointer-events-none absolute inset-x-0 -inset-y-[20%] opacity-[0.07]"
         style={{
           backgroundImage:
             "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
@@ -41,6 +73,7 @@ export function PageHero({
         {crumbs?.length ? (
           <nav
             aria-label="Breadcrumb"
+            data-motion="crumbs"
             className="mb-8 flex flex-wrap items-center gap-1.5 text-[0.8125rem]"
           >
             {crumbs.map((crumb, index) => (
@@ -69,9 +102,18 @@ export function PageHero({
             {title}
           </h1>
           {lead ? (
-            <p className="mt-6 text-lg leading-relaxed text-primary-foreground/70">{lead}</p>
+            <p
+              data-motion="lead"
+              className="mt-6 text-lg leading-relaxed text-primary-foreground/70"
+            >
+              {lead}
+            </p>
           ) : null}
-          {children ? <div className="mt-8">{children}</div> : null}
+          {children ? (
+            <div data-motion="hero-cta" className="mt-8">
+              {children}
+            </div>
+          ) : null}
         </div>
       </Container>
     </div>

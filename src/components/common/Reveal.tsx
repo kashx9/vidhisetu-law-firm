@@ -1,10 +1,16 @@
 import * as React from "react";
+import { gsap, useMotion } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 /**
- * Restrained scroll reveal — a short fade and 12px rise, once, on entry.
- * The brief asks for lightweight animation, so this uses IntersectionObserver
- * rather than a motion library, and respects prefers-reduced-motion.
+ * Restrained scroll reveal — a short fade and rise, once, on entry.
+ *
+ * Used in every grid on the site, so it stays quiet: the interest comes from
+ * the stagger across a row, not from any single card's movement. `delay` is in
+ * milliseconds, which is what the call sites pass (`index * 40`).
+ *
+ * The hidden state is set by GSAP in a layout effect rather than by a class, so
+ * the server-rendered markup is fully visible. See src/lib/motion.ts.
  */
 export function Reveal({
   children,
@@ -18,42 +24,18 @@ export function Reveal({
   /** Render as something other than a div — e.g. "li" inside an <ol>. */
   as?: "div" | "li" | "article" | "section";
 }) {
-  const ref = React.useRef<HTMLElement>(null);
-  const [shown, setShown] = React.useState(false);
-
-  React.useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) {
-      setShown(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShown(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "0px 0px -10% 0px", threshold: 0.05 },
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
+  const ref = useMotion<HTMLElement>((scope) => {
+    gsap.from(scope, {
+      opacity: 0,
+      y: 18,
+      duration: 0.85,
+      delay: delay / 1000,
+      scrollTrigger: { trigger: scope, start: "top 90%", once: true },
+    });
+  }, [delay]);
 
   return (
-    <Tag
-      ref={ref as React.Ref<never>}
-      style={{ transitionDelay: `${delay}ms` }}
-      className={cn(
-        "transition-[opacity,transform] duration-500 ease-out",
-        shown ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
-        className,
-      )}
-    >
+    <Tag ref={ref as React.Ref<never>} className={className ? cn(className) : undefined}>
       {children}
     </Tag>
   );

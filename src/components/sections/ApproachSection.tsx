@@ -5,10 +5,24 @@ import { Section, SectionHeading } from "@/components/common/Section";
 import { Reveal } from "@/components/common/Reveal";
 import { approachSteps } from "@/content/approach";
 import { sections } from "@/content/homepage";
+import { gsap, useMotion } from "@/lib/motion";
 
 /** Section 09 — Our Approach. Understand → Assess → Advise → Execute → Support. */
 export function ApproachSection({ showCta = true }: { showCta?: boolean }) {
   const { approach } = sections;
+
+  // The step numerals resolve as the section is scrolled through, so the five
+  // stages read as a sequence rather than five identical cards.
+  const steps = useMotion<HTMLOListElement>(() => {
+    gsap.utils.toArray<HTMLElement>("[data-motion='step-number']").forEach((number) => {
+      gsap.from(number, {
+        opacity: 0.2,
+        y: 14,
+        ease: "none",
+        scrollTrigger: { trigger: number, start: "top 88%", end: "top 55%", scrub: true },
+      });
+    });
+  });
 
   return (
     <Section tone="sand">
@@ -18,7 +32,7 @@ export function ApproachSection({ showCta = true }: { showCta?: boolean }) {
         supporting={approach.supporting}
       />
 
-      <ol className="mt-14 grid gap-px bg-border md:grid-cols-3 lg:grid-cols-5">
+      <ol ref={steps} className="mt-14 grid gap-px bg-border md:grid-cols-3 lg:grid-cols-5">
         {approachSteps.map((step, index) => (
           <Reveal
             as="li"
@@ -26,7 +40,9 @@ export function ApproachSection({ showCta = true }: { showCta?: boolean }) {
             delay={index * 45}
             className="flex h-full flex-col bg-background p-7"
           >
-            <span className="font-display text-4xl text-accent/35">{step.number}</span>
+            <span data-motion="step-number" className="font-display text-4xl text-accent/35">
+              {step.number}
+            </span>
             <h3 className="mt-5 font-display text-xl text-primary">{step.title}</h3>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{step.summary}</p>
           </Reveal>

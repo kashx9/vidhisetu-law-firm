@@ -17,7 +17,7 @@ export const hero = {
   markers: [
     { value: "35+", label: "Years of combined practice" },
     { value: "300+", label: "Businesses advised" },
-    { value: "9", label: "Industries served" },
+    { value: "6", label: "Industries served" },
   ],
 } as const;
 

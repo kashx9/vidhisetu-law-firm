@@ -1,4 +1,5 @@
 import * as React from "react";
+import { gsap, lineSweep, revealHeading, useMotion } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 /** Constrained content column. Width comes from tailwind.config container. */
@@ -64,8 +65,24 @@ export function SectionHeading({
   className?: string;
   children?: React.ReactNode;
 }) {
+  // Every section headline on the site enters the same way: the eyebrow rule
+  // draws out, then the display lines sweep up from behind their own mask.
+  const ref = useMotion<HTMLDivElement>(
+    (scope) =>
+      revealHeading(scope.querySelector("h2"), (lines) =>
+        gsap
+          .timeline({ scrollTrigger: { trigger: scope, start: "top 85%", once: true } })
+          .from(lines, lineSweep)
+          .from(".eyebrow > span", { scaleX: 0, transformOrigin: "left center", duration: 0.7 }, 0)
+          .from(".eyebrow", { opacity: 0, duration: 0.6 }, 0)
+          .from("[data-motion='supporting']", { opacity: 0, y: 12, duration: 0.7 }, 0.3),
+      ),
+    [headline],
+  );
+
   return (
     <div
+      ref={ref}
       className={cn(
         "flex flex-col gap-4",
         align === "center" && "items-center text-center",
@@ -85,6 +102,7 @@ export function SectionHeading({
       </h2>
       {supporting ? (
         <p
+          data-motion="supporting"
           className={cn(
             "max-w-2xl text-[1.0625rem] leading-relaxed",
             tone === "dark" ? "text-primary-foreground/70" : "text-muted-foreground",
