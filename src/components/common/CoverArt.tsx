@@ -107,6 +107,7 @@ export function CoverArt({
   alt,
   className,
   aspect = "aspect-[16/10]",
+  zoom = false,
 }: {
   seed: string;
   label?: string;
@@ -114,11 +115,22 @@ export function CoverArt({
   alt?: string;
   className?: string;
   aspect?: string;
+  /** Scale the art to 1.04 when an enclosing `.group` is hovered or focused. */
+  zoom?: boolean;
 }) {
+  const zoomClass = zoom
+    ? "transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] group-focus-within:scale-[1.04]"
+    : undefined;
   if (image) {
     return (
       <div className={cn("overflow-hidden bg-muted", aspect, className)}>
-        <img src={image} alt={alt ?? ""} className="h-full w-full object-cover" loading="lazy" />
+        <img
+          src={image}
+          alt={alt ?? ""}
+          className={cn("h-full w-full object-cover", zoomClass)}
+          loading="lazy"
+          decoding="async"
+        />
       </div>
     );
   }
@@ -130,7 +142,7 @@ export function CoverArt({
       <svg
         viewBox="0 0 240 180"
         preserveAspectRatio="xMidYMid slice"
-        className="h-full w-full text-accent/45"
+        className={cn("h-full w-full text-accent/45", zoomClass)}
         aria-hidden
       >
         {compositions[index](seed)}

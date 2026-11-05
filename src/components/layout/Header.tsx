@@ -7,6 +7,9 @@ import { Logo } from "@/components/common/Logo";
 import { primaryNav } from "@/content/navigation";
 import { site } from "@/content/site";
 import { cn } from "@/lib/utils";
+import { Magnetic } from "@/components/motion/Magnetic";
+import { dur, ease, gsap, useMotion } from "@/lib/motion";
+import { getLenis } from "@/providers/SmoothScroll";
 
 /**
  * Sticky header. Transparent-to-solid on scroll, dropdown panels for the two
@@ -20,7 +23,7 @@ export function Header() {
   const location = useLocation();
 
   React.useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -34,21 +37,34 @@ export function Header() {
 
   React.useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
+    // Smooth scrolling has to stand down too, or the page scrolls under the sheet.
+    if (mobileOpen) getLenis()?.stop();
+    else getLenis()?.start();
     return () => {
       document.body.style.overflow = "";
+      getLenis()?.start();
     };
   }, [mobileOpen]);
 
   return (
+    <>
+    {/* Fixed rather than sticky, with a spacer holding its full height, so the
+        header can tighten on scroll without moving the page beneath it. */}
     <header
+      data-site-header
       className={cn(
-        "sticky top-0 z-40 border-b transition-colors duration-300",
+        "fixed inset-x-0 top-0 z-40 border-b transition-[background-color,border-color,backdrop-filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
         scrolled
-          ? "border-border bg-background/95 backdrop-blur"
+          ? "border-border bg-background/[0.92] backdrop-blur-md"
           : "border-transparent bg-background",
       )}
     >
-      <Container className="flex h-20 items-center justify-between gap-8">
+      <Container
+        className={cn(
+          "flex items-center justify-between gap-8 transition-[height] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          scrolled ? "h-[3.75rem]" : "h-20",
+        )}
+      >
         <Logo />
 
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
@@ -78,33 +94,7 @@ export function Header() {
                   />
                 </Link>
 
-                {openMenu === item.label ? (
-                  // Past nine entries a single column runs taller than a short
-                  // laptop viewport, so the panel splits into two.
-                  <div
-                    className={cn(
-                      "absolute left-1/2 top-full z-50 -translate-x-1/2 pt-2",
-                      item.children.length > 9 ? "w-[42rem]" : "w-[22rem]",
-                    )}
-                  >
-                    <div
-                      className={cn(
-                        "animate-fade-up border border-border bg-card p-2 shadow-lg",
-                        item.children.length > 9 && "grid grid-cols-2 gap-x-2",
-                      )}
-                    >
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.href}
-                          to={child.href}
-                          className="block px-4 py-2.5 text-sm text-primary transition-colors hover:bg-secondary/60 hover:text-accent"
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                ) : null}
+                {openMenu === item.label ? <DropdownPanel items={item.children} /> : null}
               </div>
             ) : (
               <RouterNavLink
@@ -124,9 +114,11 @@ export function Header() {
         </nav>
 
         <div className="hidden items-center gap-5 lg:flex">
-          <Button asChild size="sm">
-            <Link to={site.cta.primary.href}>{site.cta.primary.label}</Link>
-          </Button>
+          <Magnetic>
+            <Button asChild size="sm">
+              <Link to={site.cta.primary.href}>{site.cta.primary.label}</Link>
+            </Button>
+          </Magnetic>
         </div>
 
         <button
@@ -141,7 +133,13 @@ export function Header() {
       </Container>
 
       {mobileOpen ? (
-        <div className="fixed inset-x-0 bottom-0 top-20 z-40 overflow-y-auto border-t border-border bg-background lg:hidden">
+        <div
+          data-lenis-prevent
+          className={cn(
+            "fixed inset-x-0 bottom-0 z-40 overflow-y-auto border-t border-border bg-background lg:hidden",
+            scrolled ? "top-[3.75rem]" : "top-20",
+          )}
+        >
           <Container className="py-6">
             <ul className="divide-y divide-border">
               {primaryNav.map((item) => (
@@ -163,6 +161,52 @@ export function Header() {
         </div>
       ) : null}
     </header>
+    <div aria-hidden className="h-20 shrink-0" />
+    </>
+  );
+}
+
+/**
+ * Desktop dropdown. Mounted on open, so the entrance plays every time: the
+ * panel slides in 8px and its links follow with a short stagger.
+ */
+function DropdownPanel({ items }: { items: { label: string; href: string }[] }) {
+  const ref = useMotion<HTMLDivElement>(() => {
+    gsap
+      .timeline({ defaults: { duration: dur.fast, ease: ease.out } })
+      .from("[data-dropdown='panel']", { opacity: 0, y: 8 })
+      .from("[data-dropdown='item']", { opacity: 0, y: 8, stagger: 0.02 }, 0.05);
+  });
+
+  // Past nine entries a single column runs taller than a short laptop
+  // viewport, so the panel splits into two.
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "absolute left-1/2 top-full z-50 -translate-x-1/2 pt-2",
+        items.length > 9 ? "w-[42rem]" : "w-[22rem]",
+      )}
+    >
+      <div
+        data-dropdown="panel"
+        className={cn(
+          "border border-border bg-card p-2 shadow-lg",
+          items.length > 9 && "grid grid-cols-2 gap-x-2",
+        )}
+      >
+        {items.map((child) => (
+          <Link
+            key={child.href}
+            to={child.href}
+            data-dropdown="item"
+            className="block px-4 py-2.5 text-sm text-primary transition-colors hover:bg-secondary/60 hover:text-accent"
+          >
+            {child.label}
+          </Link>
+        ))}
+      </div>
+    </div>
   );
 }
 

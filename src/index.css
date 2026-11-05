@@ -27,6 +27,38 @@
   :focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
+
+  /* Lenis — smooth scrolling takes over from the native smooth behaviour. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis:not(.lenis-autoToggle).lenis-stopped {
+    overflow: clip;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+
+  /* Split headings keep their words inline-block so they can rise. */
+  .motion-word {
+    will-change: transform, opacity;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.2s !important;
+      animation-duration: 0.2s !important;
+    }
+  }
 }
 
 @layer components {
@@ -52,6 +84,91 @@
   }
   .no-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+
+  /*
+   * Gold underline sweep for text links and titles. The line grows from the
+   * left on hover/focus via background-size, so it never shifts layout.
+   */
+  .link-sweep {
+    background-image: linear-gradient(hsl(var(--accent)), hsl(var(--accent)));
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1px;
+    transition: background-size 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .link-sweep:hover,
+  .link-sweep:focus-visible,
+  .group:hover .link-sweep,
+  .group:focus-visible .link-sweep {
+    background-size: 100% 1px;
+  }
+
+  /*
+   * Shared button hover: a hairline sweeps across the foot of the button.
+   * `--sweep` is set per variant in button.tsx.
+   */
+  .btn-sweep {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .btn-sweep::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--sweep, hsl(var(--accent)));
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
+  .btn-sweep:hover::after,
+  .btn-sweep:focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+  .btn-sweep svg:last-child {
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn-sweep:hover svg:last-child,
+  .btn-sweep:focus-visible svg:last-child {
+    transform: translateX(3px);
+  }
+
+  /*
+   * Cursor-following gold glow (see useSpotlight). The position comes from
+   * --mx / --my; keyboard focus centres it. Only on precise pointers.
+   */
+  .spotlight {
+    position: relative;
+    isolation: isolate;
+  }
+  .spotlight::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(
+      360px circle at var(--mx, 50%) var(--my, 50%),
+      hsl(var(--accent) / 0.12),
+      transparent 65%
+    );
+    transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .spotlight:focus-visible::before,
+  .spotlight:focus-within::before {
+    opacity: 1;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .spotlight:hover::before {
+      opacity: 1;
+    }
   }
 
   /* Editorial body copy inside long-form pages (blog posts, legal pages). */

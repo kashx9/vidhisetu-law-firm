@@ -4,7 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Container, Eyebrow } from "@/components/common/Section";
 import { hero } from "@/content/homepage";
 import { site } from "@/content/site";
-import { countUp, gsap, lineSweep, revealHeading, useMotion } from "@/lib/motion";
+import { Magnetic } from "@/components/motion/Magnetic";
+import {
+  countUp,
+  dur,
+  ease,
+  enterFrom,
+  eyebrowIn,
+  gsap,
+  mq,
+  revealHeading,
+  stagger,
+  useMotion,
+  wordRise,
+} from "@/lib/motion";
 
 /**
  * Section 02 — Hero.
@@ -13,25 +26,32 @@ import { countUp, gsap, lineSweep, revealHeading, useMotion } from "@/lib/motion
  */
 export function Hero() {
   const ref = useMotion<HTMLElement>((scope) => {
-    // The headline leads; everything else follows it in, and the arch draws
-    // itself alongside so the right column is not dead weight on arrival.
-    const cleanup = revealHeading(scope.querySelector("h1"), (lines) =>
+    const mm = gsap.matchMedia();
+
+    // The load sequence. The figure rises into frame first — revealed from the
+    // ground up, settling out of a soft focus — and the words follow her in.
+    const cleanup = revealHeading(scope.querySelector("h1"), (words) =>
       gsap
-        .timeline({ defaults: { duration: 0.9 } })
-        .from(".eyebrow", { opacity: 0, duration: 0.6 })
-        .from(".eyebrow > span", { scaleX: 0, transformOrigin: "left center" }, 0)
-        .from(lines, lineSweep, 0.1)
-        .from("[data-motion='lead']", { opacity: 0, y: 16 }, 0.5)
-        .from("[data-motion='actions'] > *", { opacity: 0, y: 16, stagger: 0.08 }, 0.65)
-        .from("[data-motion='markers'] > *", { opacity: 0, y: 14, stagger: 0.08 }, 0.8)
-        .from("[data-motion='panel']", { opacity: 0, duration: 1.4 }, 0.2)
-        .from(
-          // Direct children only — the grid pattern inside <defs> is not drawn in.
-          "[data-motion='arch'] > path, [data-motion='arch'] > line",
-          { drawSVG: "0% 0%", duration: 1.8, stagger: 0.12, ease: "power2.inOut" },
-          0.35,
+        .timeline()
+        .fromTo(
+          "[data-hero='image']",
+          { clipPath: "inset(100% 0% 0% 0%)", scale: 1.08, filter: "blur(14px)" },
+          {
+            clipPath: "inset(0% 0% 0% 0%)",
+            scale: 1,
+            filter: "blur(0px)",
+            duration: dur.slow * 1.4,
+            ease: ease.out,
+            clearProps: "filter,clipPath",
+          },
+          0,
         )
-        .from("[data-motion='caption']", { opacity: 0, y: 12 }, 1.2),
+        .add(eyebrowIn(scope), 0.15)
+        .from(words, wordRise, 0.35)
+        .from("[data-motion='lead']", { ...enterFrom }, "-=0.3")
+        .from("[data-motion='actions'] > *", { ...enterFrom, stagger: stagger.items }, "-=0.45")
+        .from("[data-motion='markers'] > *", { ...enterFrom, stagger: stagger.items }, "-=0.4")
+        .from("[data-motion='caption']", { ...enterFrom }, "-=0.5"),
     );
 
     // The markers count up to whatever figure the content file states.
@@ -39,14 +59,44 @@ export function Hero() {
       .toArray<HTMLElement>("[data-motion='marker-value']")
       .forEach((el) => countUp(el, scope));
 
-    // A little depth: the arch panel lags the text column as the page scrolls.
-    gsap.to("[data-motion='panel']", {
-      yPercent: -9,
+    // She drifts up a little slower than the page, which is what keeps her
+    // feeling set into the background rather than pasted onto it.
+    gsap.to("[data-hero='image']", {
+      yPercent: -8,
       ease: "none",
       scrollTrigger: { trigger: scope, start: "top top", end: "bottom top", scrub: true },
     });
 
-    return cleanup;
+    // A gentle tilt toward the cursor — precise pointers only.
+    mm.add(mq.finePointer, () => {
+      const card = scope.querySelector<HTMLElement>("[data-motion='tilt']");
+      if (!card) return;
+      gsap.set(card, { transformPerspective: 1200, transformOrigin: "50% 50%" });
+      const toX = gsap.quickTo(card, "rotationY", { duration: dur.slow, ease: ease.out });
+      const toY = gsap.quickTo(card, "rotationX", { duration: dur.slow, ease: ease.out });
+      const onMove = (event: PointerEvent) => {
+        const rect = card.getBoundingClientRect();
+        const nx = (event.clientX - (rect.left + rect.width / 2)) / (window.innerWidth / 2);
+        const ny = (event.clientY - (rect.top + rect.height / 2)) / (window.innerHeight / 2);
+        toX(gsap.utils.clamp(-1, 1, nx) * 4);
+        toY(gsap.utils.clamp(-1, 1, ny) * -4);
+      };
+      const onLeave = () => {
+        toX(0);
+        toY(0);
+      };
+      scope.addEventListener("pointermove", onMove);
+      scope.addEventListener("pointerleave", onLeave);
+      return () => {
+        scope.removeEventListener("pointermove", onMove);
+        scope.removeEventListener("pointerleave", onLeave);
+      };
+    });
+
+    return () => {
+      cleanup();
+      mm.revert();
+    };
   });
 
   return (
@@ -70,12 +120,14 @@ export function Hero() {
           </p>
 
           <div data-motion="actions" className="mt-10 flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg">
-              <Link to={site.cta.primary.href}>
-                {site.cta.primary.label}
-                <ArrowRight aria-hidden />
-              </Link>
-            </Button>
+            <Magnetic>
+              <Button asChild size="lg" className="w-full sm:w-auto">
+                <Link to={site.cta.primary.href}>
+                  {site.cta.primary.label}
+                  <ArrowRight aria-hidden />
+                </Link>
+              </Button>
+            </Magnetic>
             <Button asChild size="lg" variant="outline">
               <Link to={site.cta.secondary.href}>{site.cta.secondary.label}</Link>
             </Button>
@@ -104,60 +156,42 @@ export function Hero() {
           </dl>
         </div>
 
-        {/* Editorial mark — an architectural arch built from hairlines. */}
+        {/*
+          The figure, set into the page rather than framed on it. Two things do
+          the blending: `mix-blend-multiply` drops the artwork's white field
+          onto the ivory (which is why the panel carries an explicit background
+          — multiply needs an opaque surface in its own stacking context, and
+          the tilt transform creates one), and the radial mask dissolves her
+          edges so there is no rectangle anywhere.
+        */}
         <div data-motion="panel" className="relative hidden lg:block">
-          <div className="relative aspect-[4/5] w-full border border-border bg-card">
-            <svg viewBox="0 0 400 500" className="h-full w-full" aria-hidden data-motion="arch">
-              <defs>
-                <pattern id="hero-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <path
-                    d="M40 0 L0 0 0 40"
-                    fill="none"
-                    className="stroke-border"
-                    strokeWidth="0.75"
-                  />
-                </pattern>
-              </defs>
-              <rect width="400" height="500" fill="url(#hero-grid)" opacity="0.7" />
-              <path
-                d="M70 430 L70 220 A130 130 0 0 1 330 220 L330 430"
-                className="fill-none stroke-primary"
-                strokeWidth="1.25"
-              />
-              <path
-                d="M120 430 L120 235 A80 80 0 0 1 280 235 L280 430"
-                className="fill-none stroke-accent"
-                strokeWidth="1"
-              />
-              <line
-                x1="40"
-                y1="430"
-                x2="360"
-                y2="430"
-                className="stroke-primary"
-                strokeWidth="1.75"
-              />
-              <line
-                x1="200"
-                y1="90"
-                x2="200"
-                y2="430"
-                className="stroke-accent"
-                strokeWidth="0.75"
-                strokeDasharray="4 6"
-              />
-            </svg>
-            <div
-              data-motion="caption"
-              className="absolute bottom-8 left-8 right-8 border-t border-border pt-5"
-            >
-              <p className="font-display text-lg italic leading-snug text-primary">
-                “Vidhi” is law. “Setu” is the bridge.
-              </p>
-              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                Between what the law requires and what your business is trying to do.
-              </p>
-            </div>
+          <div data-motion="tilt" className="relative aspect-[3/4] w-full bg-background">
+            <img
+              data-hero="image"
+              src="/hero-justice.jpg"
+              alt=""
+              width={675}
+              height={1200}
+              loading="eager"
+              decoding="async"
+              className="absolute inset-0 h-full w-full object-contain object-bottom mix-blend-multiply"
+              style={{
+                maskImage:
+                  "radial-gradient(118% 92% at 58% 38%, #000 52%, rgba(0,0,0,0.45) 78%, transparent 100%)",
+                WebkitMaskImage:
+                  "radial-gradient(118% 92% at 58% 38%, #000 52%, rgba(0,0,0,0.45) 78%, transparent 100%)",
+              }}
+            />
+          </div>
+
+          {/* Sits under the figure, not over her — she dissolves into this rule. */}
+          <div data-motion="caption" className="mt-6 border-t border-border pt-5">
+            <p className="font-display text-lg italic leading-snug text-primary">
+              Vidhi Setu- “Ask. Understand. Act.- The Vidhi Setu Way”.
+            </p>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              Between what the law requires and what your business is trying to do.
+            </p>
           </div>
         </div>
       </Container>

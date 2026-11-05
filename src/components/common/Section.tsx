@@ -1,5 +1,5 @@
 import * as React from "react";
-import { gsap, lineSweep, revealHeading, useMotion } from "@/lib/motion";
+import { dur, enterFrom, eyebrowIn, gsap, onEnter, revealHeading, useMotion, wordRise } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 /** Constrained content column. Width comes from tailwind.config container. */
@@ -41,8 +41,8 @@ export function Eyebrow({
 }) {
   return (
     <span className={cn("eyebrow", className)}>
-      <span aria-hidden className="h-px w-6 bg-current opacity-60" />
-      {children}
+      <span aria-hidden data-eyebrow="rule" className="h-px w-6 bg-current opacity-60" />
+      <span data-eyebrow="label">{children}</span>
     </span>
   );
 }
@@ -59,6 +59,7 @@ export function SectionHeading({
   tone = "light",
   className,
   children,
+  scrubSupporting = false,
 }: {
   eyebrow?: string;
   headline: string;
@@ -67,20 +68,25 @@ export function SectionHeading({
   tone?: "light" | "dark";
   className?: string;
   children?: React.ReactNode;
+  /** The caller animates the supporting line itself (What We Do scrubs it). */
+  scrubSupporting?: boolean;
 }) {
   // Every section headline on the site enters the same way: the eyebrow rule
-  // draws out, then the display lines sweep up from behind their own mask.
+  // draws out and its label fades in, the headline's words rise and un-blur
+  // one after another, then the supporting line takes the standard enter.
   const ref = useMotion<HTMLDivElement>(
     (scope) =>
-      revealHeading(scope.querySelector("h2"), (lines) =>
-        gsap
-          .timeline({ scrollTrigger: { trigger: scope, start: "top 85%", once: true } })
-          .from(lines, lineSweep)
-          .from(".eyebrow > span", { scaleX: 0, transformOrigin: "left center", duration: 0.7 }, 0)
-          .from(".eyebrow", { opacity: 0, duration: 0.6 }, 0)
-          .from("[data-motion='supporting']", { opacity: 0, y: 12, duration: 0.7 }, 0.3),
-      ),
-    [headline],
+      revealHeading(scope.querySelector("h2"), (words) => {
+        const tl = gsap
+          .timeline({ scrollTrigger: onEnter(scope) })
+          .add(eyebrowIn(scope), 0)
+          .from(words, wordRise, 0.25);
+        if (!scrubSupporting) {
+          tl.from("[data-motion='supporting']", { ...enterFrom }, `-=${dur.base * 0.6}`);
+        }
+        return tl;
+      }),
+    [headline, scrubSupporting],
   );
 
   return (

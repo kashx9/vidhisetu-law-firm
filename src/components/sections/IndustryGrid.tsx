@@ -6,6 +6,7 @@ import { Reveal } from "@/components/common/Reveal";
 import { industries } from "@/content/industries";
 import { sections } from "@/content/homepage";
 import { getIcon } from "@/lib/icons";
+import { useSpotlight } from "@/components/motion/useSpotlight";
 
 /**
  * Section 06 — Industry Expertise.
@@ -13,6 +14,7 @@ import { getIcon } from "@/lib/icons";
  */
 export function IndustryGrid({ showCta = true }: { showCta?: boolean }) {
   const { industries: copy } = sections;
+  const grid = useSpotlight<HTMLDivElement>();
 
   return (
     <Section tone="sand">
@@ -22,20 +24,24 @@ export function IndustryGrid({ showCta = true }: { showCta?: boolean }) {
         supporting={copy.supporting}
       />
 
-      <div className="mt-14 grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
+      <div ref={grid} className="mt-14 grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
         {industries.map((industry, index) => {
           const Icon = getIcon(industry.icon);
           return (
-            <Reveal key={industry.slug} delay={index * 35}>
+            <Reveal key={industry.slug} delay={(index % 3) * 80} className="h-full">
               <Link
                 to={`/industries/${industry.slug}`}
-                className="group flex h-full flex-col bg-background p-7 transition-colors hover:bg-card"
+                className="spotlight group flex h-full flex-col bg-background p-7 transition-colors duration-300 hover:bg-card focus-visible:bg-card"
               >
                 <div className="flex items-start justify-between gap-4">
-                  <Icon aria-hidden className="h-6 w-6 text-accent" strokeWidth={1.25} />
+                  <Icon
+                    aria-hidden
+                    className="h-6 w-6 text-accent transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-rotate-6 group-focus-visible:-rotate-6"
+                    strokeWidth={1.25}
+                  />
                   <ArrowUpRight
                     aria-hidden
-                    className="h-4 w-4 text-muted-foreground/40 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent"
+                    className="h-4 w-4 text-muted-foreground/40 transition-[transform,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent group-focus-visible:-translate-y-0.5 group-focus-visible:translate-x-0.5 group-focus-visible:text-accent"
                   />
                 </div>
                 <h3 className="mt-6 font-display text-xl leading-snug text-primary">

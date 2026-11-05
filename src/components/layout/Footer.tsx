@@ -5,15 +5,25 @@ import { Logo } from "@/components/common/Logo";
 import { footerNav, legalNav } from "@/content/navigation";
 import { site } from "@/content/site";
 import { getIcon, type IconName } from "@/lib/icons";
+import { enterFrom, gsap, onEnter, stagger, useMotion } from "@/lib/motion";
 
 export function Footer() {
   const year = new Date().getFullYear();
 
+  // Standard enter only — the columns arrive in a row, nothing more.
+  const ref = useMotion<HTMLElement>((scope) => {
+    gsap.from("[data-footer='col']", {
+      ...enterFrom,
+      stagger: stagger.items,
+      scrollTrigger: onEnter(scope, "top 92%"),
+    });
+  });
+
   return (
-    <footer className="bg-primary text-primary-foreground">
+    <footer ref={ref} className="bg-primary text-primary-foreground">
       <Container className="py-16 md:py-20">
         <div className="grid gap-12 lg:grid-cols-[1.4fr_repeat(3,1fr)]">
-          <div className="max-w-sm">
+          <div data-footer="col" className="max-w-sm">
             <Logo tone="dark" />
             <p className="mt-6 text-sm leading-relaxed text-primary-foreground/60">
               {site.footerStatement}
@@ -56,14 +66,14 @@ export function Footer() {
           </div>
 
           {footerNav.map((column) => (
-            <nav key={column.title} aria-label={column.title}>
+            <nav key={column.title} aria-label={column.title} data-footer="col">
               <h3 className="eyebrow text-accent">{column.title}</h3>
               <ul className="mt-6 space-y-3">
                 {column.links.map((link) => (
                   <li key={`${column.title}-${link.href}-${link.label}`}>
                     <Link
                       to={link.href}
-                      className="text-sm text-primary-foreground/65 transition-colors hover:text-accent"
+                      className="link-sweep text-sm text-primary-foreground/65 transition-colors hover:text-accent"
                     >
                       {link.label}
                     </Link>
@@ -100,7 +110,7 @@ export function Footer() {
           <ul className="flex flex-wrap gap-x-6 gap-y-2">
             {legalNav.map((link) => (
               <li key={link.href}>
-                <Link to={link.href} className="transition-colors hover:text-accent">
+                <Link to={link.href} className="link-sweep transition-colors hover:text-accent">
                   {link.label}
                 </Link>
               </li>

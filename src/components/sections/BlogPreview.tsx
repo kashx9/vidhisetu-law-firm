@@ -38,7 +38,7 @@ export function BlogPreview() {
           <li key={category.slug}>
             <Link
               to={`/blog?category=${category.slug}`}
-              className="text-xs uppercase tracking-eyebrow text-muted-foreground transition-colors hover:text-accent"
+              className="link-sweep text-xs uppercase tracking-eyebrow text-muted-foreground transition-colors hover:text-accent"
             >
               {category.label}
             </Link>
@@ -60,7 +60,7 @@ export function BlogPreview() {
       ) : (
         <div className="mt-14 grid gap-10 md:grid-cols-3">
           {featured.map((post, index) => (
-            <Reveal key={post.id} delay={index * 60}>
+            <Reveal key={post.id} delay={index * 80} className="h-full">
               <BlogCard post={post} />
             </Reveal>
           ))}

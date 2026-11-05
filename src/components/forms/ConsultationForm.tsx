@@ -20,6 +20,7 @@ import {
 import { consultationModes, enquiryTopics, resolveRoute } from "@/content/consultation";
 import { site } from "@/content/site";
 import { cn } from "@/lib/utils";
+import { Magnetic } from "@/components/motion/Magnetic";
 
 /**
  * Section 11 — the consultation enquiry form.
@@ -227,16 +228,18 @@ export function ConsultationForm({ tone = "light" }: { tone?: "light" | "dark" }
       </div>
 
       <div className="flex flex-col gap-4 sm:col-span-2 sm:flex-row sm:items-center">
-        <Button
-          type="submit"
-          size="lg"
-          variant={onDark ? "accent" : "default"}
-          disabled={isSubmitting}
-          className="sm:w-auto"
-        >
-          {isSubmitting ? "Sending…" : site.cta.primary.label}
-          {!isSubmitting ? <ArrowRight aria-hidden /> : null}
-        </Button>
+        <Magnetic>
+          <Button
+            type="submit"
+            size="lg"
+            variant={onDark ? "accent" : "default"}
+            disabled={isSubmitting}
+            className="w-full sm:w-auto"
+          >
+            {isSubmitting ? "Sending…" : site.cta.primary.label}
+            {!isSubmitting ? <ArrowRight aria-hidden /> : null}
+          </Button>
+        </Magnetic>
         <p
           className={cn("text-xs", onDark ? "text-primary-foreground/50" : "text-muted-foreground")}
         >

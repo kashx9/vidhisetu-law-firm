@@ -8,15 +8,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        accent: "bg-accent text-accent-foreground hover:bg-accent/90",
+        default: "btn-sweep bg-primary text-primary-foreground hover:bg-primary/90",
+        accent:
+          "btn-sweep bg-accent text-accent-foreground hover:bg-accent/90 [--sweep:hsl(var(--accent-foreground))]",
         outline:
-          "border border-primary/25 bg-transparent text-primary hover:border-primary/60 hover:bg-primary/5",
+          "btn-sweep border border-primary/25 bg-transparent text-primary hover:border-primary/60 hover:bg-primary/5",
         subtle: "bg-secondary text-secondary-foreground hover:bg-secondary/70",
         ghost: "text-primary hover:bg-primary/5",
         link: "text-accent underline-offset-4 hover:underline",
         onDark:
-          "border border-primary-foreground/30 bg-transparent text-primary-foreground hover:border-primary-foreground/70 hover:bg-primary-foreground/10",
+          "btn-sweep border border-primary-foreground/30 bg-transparent text-primary-foreground hover:border-primary-foreground/70 hover:bg-primary-foreground/10",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
       },
       size: {

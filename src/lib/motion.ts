@@ -9,9 +9,8 @@
  * 2. `prefers-reduced-motion: reduce` skips setup entirely — the element keeps
  *    its resting style rather than animating to it.
  *
- * Components animate by calling `useMotion`, which hands back a ref and runs
- * the callback in a `gsap.context()` scoped to that element. The context is
- * reverted on unmount, so route changes leave no ScrollTriggers behind.
+ * Every tween uses the tokens below (ease, dur, stagger, enter). Consistency of
+ * tempo is what makes the motion read as one system rather than many effects.
  */
 
 import * as React from "react";
@@ -19,20 +18,43 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
+import { useGSAP } from "@gsap/react";
+
+/* ───────────────────────────────── tokens ───────────────────────────────── */
+
+export const ease = {
+  /** CSS equivalent: cubic-bezier(0.22, 1, 0.36, 1) */
+  out: "expo.out",
+  inOut: "power3.inOut",
+} as const;
+
+/** Seconds. */
+export const dur = { fast: 0.3, base: 0.6, slow: 1.2 } as const;
+export const stagger = { words: 0.06, items: 0.08 } as const;
+/** Pixels. */
+export const enter = { y: 24, blur: 8 } as const;
+
+/** Breakpoints used with gsap.matchMedia(). */
+export const mq = {
+  motion: "(prefers-reduced-motion: no-preference)",
+  desktop: "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
+  belowDesktop: "(max-width: 1023.98px) and (prefers-reduced-motion: no-preference)",
+  finePointer: "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+} as const;
+
+/* ───────────────────────────────── setup ────────────────────────────────── */
 
 /**
  * ScrollTrigger schedules work on `requestAnimationFrame` the moment it is
  * registered, so the SSR smoke harness — a bare jsdom window — must not reach
  * this. Both checks together are the real test for "can animate".
  */
-const isBrowser =
+export const isBrowser =
   typeof window !== "undefined" && typeof window.requestAnimationFrame === "function";
 
 if (isBrowser) {
-  gsap.registerPlugin(ScrollTrigger, SplitText, DrawSVGPlugin);
-  // A single editorial easing and tempo for the whole site. Individual tweens
-  // override it where a different character is wanted.
-  gsap.defaults({ ease: "power3.out", duration: 0.8 });
+  gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText, DrawSVGPlugin);
+  gsap.defaults({ ease: ease.out, duration: dur.base });
 }
 
 export { gsap, ScrollTrigger, SplitText };
@@ -43,17 +65,19 @@ export const useIsomorphicLayoutEffect = isBrowser ? React.useLayoutEffect : Rea
 export const prefersReducedMotion = () =>
   isBrowser && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-type MotionSetup<T extends HTMLElement> = (
-  scope: T,
-) => void | (() => void) | Array<() => void> | undefined;
+/** True on devices with a precise hovering pointer — gates magnet, tilt and glows. */
+export const hasFinePointer = () =>
+  isBrowser && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+type MotionSetup<T extends HTMLElement> = (scope: T) => void | (() => void) | undefined;
 
 /**
- * Scope a GSAP context to one element.
+ * Scope a GSAP context to one element (via `useGSAP`).
  *
  * Inside the callback, selector strings passed to gsap are resolved within the
  * returned ref's element, so `gsap.from(".eyebrow", …)` cannot reach another
- * section. Returning a function from the callback adds extra cleanup — needed
- * for `SplitText`, which has to be reverted by hand.
+ * section. Returning a function adds extra cleanup — needed for `SplitText`
+ * and for event listeners.
  */
 export function useMotion<T extends HTMLElement = HTMLDivElement>(
   setup: MotionSetup<T>,
@@ -61,51 +85,63 @@ export function useMotion<T extends HTMLElement = HTMLDivElement>(
 ) {
   const ref = React.useRef<T>(null);
 
-  useIsomorphicLayoutEffect(() => {
-    const scope = ref.current;
-    if (!scope || !isBrowser || prefersReducedMotion()) return;
-
-    const ctx = gsap.context(() => setup(scope), scope);
-    return () => ctx.revert();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
+  useGSAP(
+    () => {
+      const scope = ref.current;
+      if (!scope || !isBrowser || prefersReducedMotion()) return;
+      return setup(scope);
+    },
+    { scope: ref, dependencies: deps as unknown[] },
+  );
 
   return ref;
 }
 
+/* ──────────────────────────────── presets ───────────────────────────────── */
+
+/** The standard enter: fade, rise and un-blur. The blur is cleared afterwards. */
+export const enterFrom = {
+  opacity: 0,
+  y: enter.y,
+  filter: `blur(${enter.blur}px)`,
+  duration: dur.base,
+  ease: ease.out,
+  clearProps: "filter",
+} as const;
+
+/** ScrollTrigger config for a one-shot entrance. */
+export const onEnter = (trigger: gsap.DOMTarget, start = "top 85%") => ({
+  trigger,
+  start,
+  once: true,
+});
+
 /**
- * Animate a heading as masked lines — each line in a clipping wrapper, so the
- * text rises out of nothing rather than fading through the background. It is
- * the one flourish the display serif earns.
+ * Split a heading into words that rise and un-blur, one after another.
  *
- * `build` receives the lines and returns the animation to play. It is called
- * again whenever the lines have to be re-measured, which matters: a heading
- * split before Playfair Display has loaded wraps at the wrong words, and the
- * masks would then crop the wrong places. `autoSplit` re-splits on the font
- * load and on resize, and GSAP reverts the previous animation for us.
- *
- * Once the entrance has finished, re-splits are left alone — a resize should
- * not replay the headline. Returns the cleanup the caller must run.
+ * `build` receives the words and returns the animation to play. `autoSplit`
+ * re-splits once Playfair Display has loaded (and on resize), and GSAP reverts
+ * the previous animation for us. Once the entrance has played, re-splits are
+ * left alone so a resize does not replay the headline.
  */
 export function revealHeading(
   el: Element | null,
-  build: (lines: Element[]) => gsap.core.Animation | undefined,
+  build: (words: Element[]) => gsap.core.Animation | undefined,
 ) {
   if (!el) return () => {};
 
   let played = false;
 
   const split = SplitText.create(el, {
-    type: "lines",
-    mask: "lines",
-    linesClass: "motion-line",
+    type: "words",
+    wordsClass: "motion-word",
     // Mirrors the original sentence onto the element as a label, so screen
     // readers read the headline rather than the split fragments.
     aria: "auto",
     autoSplit: true,
     onSplit: (self) => {
       if (played) return;
-      const animation = build(self.lines);
+      const animation = build(self.words);
       animation?.eventCallback("onComplete", () => {
         played = true;
       });
@@ -116,26 +152,40 @@ export function revealHeading(
   return () => split.revert();
 }
 
-/** The shared line entrance: a sweep up from behind the mask. */
-export const lineSweep = {
-  yPercent: 118,
-  duration: 1,
-  stagger: 0.085,
-  ease: "expo.out",
+/** The shared word entrance used by every split heading. */
+export const wordRise = {
+  opacity: 0,
+  y: enter.y,
+  filter: `blur(${enter.blur}px)`,
+  duration: dur.base,
+  stagger: stagger.words,
+  ease: ease.out,
+  clearProps: "filter",
 } as const;
+
+/**
+ * Eyebrow entrance: the leading rule draws out, then the label fades in.
+ * Returns a timeline so callers can place it inside their own sequence.
+ */
+export function eyebrowIn(scope: Element) {
+  const tl = gsap.timeline();
+  const rule = scope.querySelector(".eyebrow > [data-eyebrow='rule']");
+  const label = scope.querySelector(".eyebrow > [data-eyebrow='label']");
+  if (rule) tl.from(rule, { scaleX: 0, transformOrigin: "left center", duration: dur.base, ease: ease.inOut });
+  if (label) tl.from(label, { opacity: 0, duration: dur.base }, "-=0.25");
+  return tl;
+}
 
 /**
  * Count a number up to the value already written in the markup.
  *
  * The element's own text is the source of truth — "35+" counts to 35 and keeps
- * the plus, "₹2.4Cr" keeps the prefix and the unit — so the content file stays
- * the only place a figure is edited.
+ * the plus — so the content file stays the only place a figure is edited.
  */
 export function countUp(el: HTMLElement, trigger: gsap.DOMTarget) {
   // Read the authored figure from a data attribute rather than from the live
-  // text, and stash it there on the first run. The counter writes to this same
-  // element, so a second setup pass — React's double-invoked effects in dev,
-  // or a remount — would otherwise read a half-counted value and count to that.
+  // text, and stash it there on the first run, so a second setup pass reads the
+  // real figure rather than a half-counted one.
   el.dataset.countTo ??= el.textContent ?? "";
   const final = el.dataset.countTo;
   const match = final.match(/-?[\d,.]+/);
@@ -152,14 +202,13 @@ export function countUp(el: HTMLElement, trigger: gsap.DOMTarget) {
 
   gsap.to(proxy, {
     value: target,
-    duration: 1.6,
-    ease: "power2.out",
+    duration: dur.slow * 1.3,
+    ease: ease.out,
     scrollTrigger: { trigger, start: "top 90%", once: true },
     onUpdate: () => {
       el.textContent = `${prefix}${proxy.value.toFixed(decimals)}${suffix}`;
     },
     onComplete: () => {
-      // Restore the authored string exactly, separators and all.
       el.textContent = final;
     },
   });

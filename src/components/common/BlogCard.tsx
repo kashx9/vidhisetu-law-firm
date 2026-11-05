@@ -18,7 +18,7 @@ export function BlogCard({
   const isLead = variant === "lead";
 
   return (
-    <article className="group h-full">
+    <article className="group h-full transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 focus-within:-translate-y-1">
       <Link to={`/blog/${post.slug}`} className="flex h-full flex-col">
         <CoverArt
           seed={post.slug}
@@ -27,6 +27,7 @@ export function BlogCard({
           alt={post.cover?.alt}
           aspect={isLead ? "aspect-[16/9]" : "aspect-[16/10]"}
           className="border border-border"
+          zoom
         />
 
         <div className="flex flex-1 flex-col pt-6">
@@ -44,7 +45,7 @@ export function BlogCard({
                 : "mt-4 font-display text-xl leading-snug text-primary transition-colors group-hover:text-accent"
             }
           >
-            {post.title}
+            <span className="link-sweep">{post.title}</span>
           </h3>
 
           <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">

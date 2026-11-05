@@ -2,7 +2,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { Container, Eyebrow } from "./Section";
-import { gsap, lineSweep, revealHeading, useMotion } from "@/lib/motion";
+import { enterFrom, eyebrowIn, gsap, revealHeading, useMotion, wordRise } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 export type Crumb = { label: string; href?: string };
@@ -30,15 +30,14 @@ export function PageHero({
   // view. The rule grid behind it drifts on scroll for a little depth.
   const ref = useMotion<HTMLDivElement>(
     (scope) => {
-      const cleanup = revealHeading(scope.querySelector("h1"), (lines) =>
+      const cleanup = revealHeading(scope.querySelector("h1"), (words) =>
         gsap
-          .timeline({ defaults: { duration: 0.9 } })
-          .from("[data-motion='crumbs'] > *", { opacity: 0, y: 8, stagger: 0.04, duration: 0.5 })
-          .from(".eyebrow", { opacity: 0, duration: 0.6 }, 0.1)
-          .from(".eyebrow > span", { scaleX: 0, transformOrigin: "left center" }, 0.1)
-          .from(lines, lineSweep, 0.15)
-          .from("[data-motion='lead']", { opacity: 0, y: 14 }, 0.45)
-          .from("[data-motion='hero-cta']", { opacity: 0, y: 14 }, 0.6),
+          .timeline()
+          .from("[data-motion='crumbs'] > *", { opacity: 0, y: 8, stagger: 0.04, duration: 0.3 })
+          .add(eyebrowIn(scope), 0.1)
+          .from(words, wordRise, 0.25)
+          .from("[data-motion='lead']", { ...enterFrom }, "-=0.35")
+          .from("[data-motion='hero-cta']", { ...enterFrom }, "-=0.45"),
       );
 
       gsap.to("[data-motion='grid']", {
