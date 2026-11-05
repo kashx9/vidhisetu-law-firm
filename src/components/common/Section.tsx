@@ -16,18 +16,21 @@ const toneClasses: Record<Tone, string> = {
   card: "bg-card",
 };
 
-export function Section({
-  tone = "paper",
-  className,
-  children,
-  ...props
-}: React.HTMLAttributes<HTMLElement> & { tone?: Tone }) {
+/** Forwards its ref so a caller can hand the band itself to GSAP. */
+export const Section = React.forwardRef<
+  HTMLElement,
+  React.HTMLAttributes<HTMLElement> & { tone?: Tone }
+>(function Section({ tone = "paper", className, children, ...props }, ref) {
   return (
-    <section className={cn("py-20 md:py-28", toneClasses[tone], className)} {...props}>
+    <section
+      ref={ref}
+      className={cn("py-20 md:py-28", toneClasses[tone], className)}
+      {...props}
+    >
       <Container>{children}</Container>
     </section>
   );
-}
+});
 
 export function Eyebrow({
   className,

@@ -40,6 +40,20 @@
     @apply h-px w-full bg-border;
   }
 
+  /*
+   * Hides the scrollbar while leaving the element scrollable — wheel, trackpad,
+   * drag and keyboard all still work. Used by the self-scrolling practice rail,
+   * where a visible scrollbar would read as a control the rail is also moving
+   * on its own. Never put this on a region whose only affordance is the bar.
+   */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   /* Editorial body copy inside long-form pages (blog posts, legal pages). */
   .prose-legal {
     @apply text-[1.0625rem] leading-[1.75] text-foreground/80;
