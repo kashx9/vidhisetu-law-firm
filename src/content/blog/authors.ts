@@ -17,32 +17,25 @@ export type Author = {
 export const authors: Author[] = [
   {
     id: "meera-raghunathan",
-    name: "Adv. Meera Raghunathan",
+    name: "Adv. Shikha Sinha",
     role: "Founder & Managing Partner",
-    initials: "MR",
+    initials: "SS",
     bio: "Advises founders and boards on structuring, investment and governance.",
   },
   {
-    id: "kabir-anand",
-    name: "Adv. Kabir Anand",
-    role: "Partner — Disputes",
-    initials: "KA",
+    id: "rishab-bakshi",
+    name: "Rishab Bakshi",
+    role: "Founder & Managing Partner",
+    initials: "RB",
     bio: "Handles commercial disputes, arbitration and recovery.",
   },
   {
-    id: "sanya-deshpande",
-    name: "Adv. Sanya Deshpande",
-    role: "Partner — Regulatory & IP",
-    initials: "SD",
+    id: "aditi-varshiney",
+    name: "Adv. Aditi Varshiney",
+    role: "Junior Associate — Corporate & IP",
+    initials: "AV",
     bio: "Builds compliance frameworks for regulated sectors and manages trademark portfolios.",
-  },
-  {
-    id: "rohan-mehta",
-    name: "Adv. Rohan Mehta",
-    role: "Principal Associate — Employment",
-    initials: "RM",
-    bio: "Advises on employment documentation, workplace policy and separations.",
-  },
+  }
 ];
 
 export const getAuthor = (id: string) => authors.find((author) => author.id === id);

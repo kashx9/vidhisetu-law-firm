@@ -184,7 +184,7 @@ export function Hero() {
             />
           </div>
 
-          {/* Sits under the figure, not over her — she dissolves into this rule. */}
+          {/* Sits under the figure, not over her — she dissolves into this rule. */} 
           <div data-motion="caption" className="mt-6 border-t border-border pt-5">
             <p className="font-display text-lg italic leading-snug text-primary">
               Vidhi Setu- “Ask. Understand. Act.- The Vidhi Setu Way”.
