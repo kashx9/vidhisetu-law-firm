@@ -1,6 +1,7 @@
 import { Suspense, lazy } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { SiteLayout } from "@/components/layout/SiteLayout";
+import { MAINTENANCE_MODE, MaintenancePage } from "@/middleware/page";
 import HomePage from "@/pages/HomePage";
 import AboutPage from "@/pages/AboutPage";
 import PracticeAreasPage from "@/pages/PracticeAreasPage";
@@ -32,6 +33,10 @@ const StudioEditorPage = lazy(() => import("@/pages/studio/StudioEditorPage"));
  * otherwise "studio" would be matched as an article slug.
  */
 export default function App() {
+  if (MAINTENANCE_MODE) {
+    return <MaintenancePage />;
+  }
+
   return (
     <BrowserRouter>
       <Suspense fallback={<div className="min-h-[60vh]" />}>

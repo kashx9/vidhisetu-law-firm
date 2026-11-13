@@ -173,6 +173,30 @@ node scripts/hash-password.mjs "the new password"
 Seeded posts and Studio posts are kept separately and merged at read time, so editing `posts.ts`
 never destroys drafts and clearing drafts never destroys `posts.ts`.
 
+### The writing surface
+
+The Studio body field is a word-processor editor (TipTap/ProseMirror) in
+`src/components/studio/RichTextEditor.tsx`, but `BlogPost.body` is still **Markdown**: the editor
+reads through `markdownToHtml` and writes back through `htmlToMarkdown`
+(`src/lib/richText.ts`). Nothing downstream changed — seeded posts, published pages, the legal
+pages and the preview all still render the same Markdown with react-markdown + remark-gfm, and a
+post written in the editor is byte-identical to one written by hand.
+
+Two consequences worth knowing before you extend the toolbar:
+
+- **Only what Markdown can express may be offered.** Underline, text colour, size and alignment
+  have no Markdown form and react-markdown does not render raw HTML, so such formatting would
+  disappear on save. The toolbar deliberately omits them, and `underline` is switched off in the
+  StarterKit config rather than left for `Ctrl+U` to find.
+- **`htmlToMarkdown` normalises tables first** (`normalizeTables`). Turndown only writes a Markdown
+  table when it can see a heading row, and it decides that by checking nothing precedes the
+  `<tbody>` — which the editor's resizable-column `<colgroup>` does. Cell contents are also
+  flattened to inline markup, because a `<p>` inside a cell makes Turndown break one row across
+  several lines. Without either step an inserted table is kept as raw HTML and vanishes from the
+  published article.
+
+The editor is only loaded on the Studio route, so public visitors never download it.
+
 ### Swapping the mock store for a real backend
 
 `src/features/blog/blogStore.ts` defines a `BlogPostRepository` interface with seven methods. A

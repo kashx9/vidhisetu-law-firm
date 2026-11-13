@@ -74,20 +74,33 @@ the blog listing.
   manually" if you want to set the address yourself).
 - **Excerpt** — one or two sentences. This is what appears on the article cards and in Google
   results, so it is worth writing properly rather than repeating the first line.
-- **Body** — the article. Write in Markdown, which is just plain text with a few marks:
+- **Body** — the article. This works like Word. Type, select text, and use the toolbar above the
+  writing area:
 
-  | To get | Type |
+  | Button | What it does |
   | --- | --- |
-  | A section heading | `## Heading` |
-  | A smaller heading | `### Heading` |
-  | **Bold** | `**bold**` |
-  | *Italic* | `*italic*` |
-  | A bulleted list | `- item` on each line |
-  | A numbered list | `1. item` on each line |
-  | A link | `[the words](https://the-address)` |
-  | A pulled-out quote | `> the quote` |
+  | **Normal text / Heading 1, 2, 3** | The style of the paragraph your cursor is in. Headings break the article into sections. |
+  | **B** and *I* | Bold and italic. `Ctrl+B` and `Ctrl+I` work too. |
+  | Strikethrough | Puts a line through the words. |
+  | Bulleted and numbered lists | Press `Enter` for the next item, `Tab` to indent one under another. |
+  | Quote | Pulls a sentence out as a large quotation. |
+  | Link | Select the words first, then click it and type the address. Click it again on an existing link to remove it. |
+  | Table | Inserts a three-by-three table with a header row. Drag the column edges to resize. |
+  | Divider | A horizontal line between sections. |
+  | Clear formatting | Strips the formatting off whatever is selected. |
+  | Undo / Redo | `Ctrl+Z` and `Ctrl+Shift+Z`. |
 
-  Switch to the **Preview** tab at any time to see exactly how it will look when published.
+  **You can paste straight in from Word.** Headings, bold, italic, lists, tables and links all
+  survive the paste. What does not survive is anything the website has no style for — fonts,
+  text colour, text size, centring and underlining. The site sets those itself so that every
+  article looks like it belongs to the firm rather than to whoever typed it. For the same reason
+  the toolbar does not offer them.
+
+  Switch to the **Preview** tab at any time to see the finished article with its byline and cover.
+  The writing area already uses the published typefaces and spacing, so the two should agree.
+
+  The **Markdown** tab shows the plain-text source behind the article. You never need it; it is
+  there for anyone who prefers typing `## Heading` to clicking, and for fixing something odd.
 
 **4. Fill in the right-hand column — how it gets found.**
 

@@ -209,4 +209,49 @@
   .prose-legal code {
     @apply rounded-sm bg-muted px-1.5 py-0.5 text-[0.9em];
   }
+  /* The Studio toolbar can produce these, so the published page must style them. */
+  .prose-legal h4 {
+    @apply mb-2 mt-6 font-display text-lg text-primary;
+  }
+  .prose-legal hr {
+    @apply my-10 border-0 border-t border-border;
+  }
+  .prose-legal pre {
+    @apply mb-5 overflow-x-auto border border-border bg-muted p-4 text-sm;
+  }
+  .prose-legal pre code {
+    @apply bg-transparent p-0;
+  }
+
+  /*
+   * The Studio writing surface. It reuses .prose-legal so what the writer sees
+   * is what the article looks like; these rules only cover the things an
+   * editable document needs and a published one does not.
+   */
+  .studio-prose > :first-child {
+    @apply mt-0;
+  }
+  .studio-prose > :last-child {
+    @apply mb-0;
+  }
+  .studio-prose table {
+    @apply table-fixed;
+  }
+  .studio-prose .selectedCell {
+    @apply relative;
+  }
+  .studio-prose .selectedCell::after {
+    @apply pointer-events-none absolute inset-0 bg-accent/15 content-[''];
+  }
+  .studio-prose .column-resize-handle {
+    @apply absolute bottom-0 top-0 w-1 cursor-col-resize bg-accent;
+    right: -2px;
+  }
+  .studio-prose.ProseMirror-focused {
+    @apply outline-none;
+  }
+  /* Keeps the caret visible on an empty document. */
+  .studio-prose p.is-editor-empty:first-child::before {
+    @apply pointer-events-none float-left h-0 text-muted-foreground content-[attr(data-placeholder)];
+  }
 }

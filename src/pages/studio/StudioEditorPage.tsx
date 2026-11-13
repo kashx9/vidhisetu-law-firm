@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Container } from "@/components/common/Section";
 import { Markdown } from "@/components/common/Markdown";
+import { RichTextEditor } from "@/components/studio/RichTextEditor";
 import { CoverArt } from "@/components/common/CoverArt";
 import { StudioGate } from "@/pages/studio/StudioGate";
 import { StatusBadge } from "@/pages/studio/StudioPage";
@@ -30,6 +31,7 @@ import { postRepository } from "@/features/blog/blogStore";
 import { canPublish, currentSession } from "@/features/blog/auth";
 import type { BlogPost, PostStatus } from "@/features/blog/types";
 import { readingTime, slugify } from "@/lib/utils";
+import { countWords } from "@/lib/richText";
 
 /** Cover images are inlined as data URLs, so keep them small. */
 const MAX_COVER_BYTES = 1_500_000;
@@ -41,7 +43,7 @@ const blankPost = (authorId: string): BlogPost => ({
   slug: "",
   title: "",
   excerpt: "",
-  body: "## Start here\n\nWrite the article in Markdown. Headings, lists, tables, quotes and links all render on the published page.\n",
+  body: "## Start here\n\nWrite the article the way you would in a word processor — use the toolbar above for headings, lists, quotes, tables and links, or paste a draft straight in from Word.\n",
   category: blogCategories[0].slug,
   tags: [],
   authorId,
@@ -192,8 +194,7 @@ function Editor() {
             {isNew ? "New post" : "Edit post"}
           </h1>
           <p className="mt-2 text-xs text-muted-foreground">
-            {draft.body.trim().split(/\s+/).filter(Boolean).length} words ·{" "}
-            {readingTime(draft.body)} min read
+            {countWords(draft.body)} words · {readingTime(draft.body)} min read
           </p>
         </div>
 
@@ -279,12 +280,27 @@ function Editor() {
               <div className="flex items-center justify-between gap-4">
                 <TabsList>
                   <TabsTrigger value="write">Write</TabsTrigger>
+                  <TabsTrigger value="markdown">Markdown</TabsTrigger>
                   <TabsTrigger value="preview">Preview</TabsTrigger>
                 </TabsList>
-                <span className="text-xs text-muted-foreground">Markdown supported</span>
+                <span className="text-xs text-muted-foreground">
+                  Formatting toolbar · paste from Word
+                </span>
               </div>
 
               <TabsContent value="write">
+                <RichTextEditor
+                  value={draft.body}
+                  onChange={(markdown) => set("body", markdown)}
+                />
+              </TabsContent>
+
+              {/*
+                The source behind the editor. Writers never need this tab, but
+                it keeps the document editable by hand — and makes it plain
+                that what the editor saves is ordinary Markdown.
+              */}
+              <TabsContent value="markdown">
                 <Textarea
                   value={draft.body}
                   onChange={(event) => set("body", event.target.value)}
